@@ -10,6 +10,15 @@ export const userController = async(req,res) =>{
                 success:false,
             });
         }
+        //for existing user
+        const existingUser = await userModel.findOne({email})
+
+        if(existingUser){
+            res.status(500).send({
+                message:"User already exist",
+                success:false
+            });
+        }
         const user = await userModel.create({
             name,
             email,

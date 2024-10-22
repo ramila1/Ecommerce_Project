@@ -4,13 +4,17 @@ import morgan from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import routeTest from './routes/routeTest.js'
+import connectDb from './config/database.js';
 
 //dot env config
 dotenv.config();
 
+//database connection
+connectDb();
+
 const app = express();
 
-const port = process.env.port || 5000;
+const port = process.env.PORT || 5000;
 
 //middlewares
 app.use(morgan("dev"));

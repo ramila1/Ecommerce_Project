@@ -35,10 +35,17 @@ const userSchema = new mongoose.Schema({
         unique:[true,'Check your Phone Number']
     },
     profilePicture:{
-        type:String
-    }
+        public_id :{
+            type:String,
+        },
+        url:{
+            type:String,
+        },
+    },
 
-},{timestamps:true});
+},
+{timestamps:true}
+);
 
 //encrypt password
 userSchema.pre('save', async function(next){

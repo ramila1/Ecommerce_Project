@@ -172,3 +172,39 @@ export const updateUser = async(req,res)=>{
         });
     }
 };
+
+//update password
+export const updatePassword = async(req,res) =>{
+    try{
+        const user = await userModel.findById(req.user._id);
+        const {oldpassword,newpassword} = req.body;
+        if(!oldpassword || !newpassword){
+            return res.status(404).send({
+                message:"Password is Incorrect",
+                success:false,
+                error
+            });
+        }
+        const isMatch = await user.comparePassword(oldpassword);
+        if(!isMatch){
+            return res.status(500).send({
+                message:"Invalid Old Password",
+                success:false
+            });
+        }
+        user.password = newpassword;
+        user.save();
+        res.status(200).send({
+            message:"Password Update Successfully",
+            success:true,
+            user
+        })
+    }catch(error){
+        console.log(error);
+        return res.status(500).send({
+            message:"Error in Updating Password",
+            success:false,
+            error
+        });
+    }
+};

@@ -1,5 +1,5 @@
 import express from 'express';
-import {getUserProfile, logout, updateUser, userController, userLoginController} from '../controllers/userController.js';
+import {getUserProfile, logout, updatePassword, updateUser, userController, userLoginController} from '../controllers/userController.js';
 import { isAuth } from '../middleswares/authMiddleware.js';
 
 const userRouter = express.Router();
@@ -18,4 +18,8 @@ userRouter.get('/logout',isAuth,logout);
 
 //update
 userRouter.put('/update',isAuth,updateUser);
+
+//update password
+userRouter.put('/update-password',isAuth,updatePassword);
+
 export default userRouter;

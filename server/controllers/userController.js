@@ -98,3 +98,23 @@ export const userLoginController = async (req,res) =>{
         });
     }
 };
+
+//profile
+export const getUserProfile = async(req,res)=>{
+    try{
+        const user = await userModel.findById(req.user._id);
+        user.password = undefined;
+        res.status(200).send({
+            message:"Profile fetch successfully",
+            success:true,
+            user
+        });
+    }catch(error){
+        console.log(error);
+        return res.status(500).send({
+            message:"Profile Error",
+            success:false,
+            error
+        });
+    }
+};

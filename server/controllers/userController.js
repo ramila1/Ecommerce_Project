@@ -77,7 +77,12 @@ export const userLoginController = async (req,res) =>{
             });
         }
         const token = await user.generateToken();
-        return res.status(200).cookie("token",token).send({
+        res.status(200).cookie("token",token,{
+            expires: new Date(Date.now()+15*24*60*60*1000),
+            secure: process.env.NODE_ENV === "development" ? true : false,
+            httpOnly: process.env.NODE_ENV === "development" ? true: false,
+
+        }).send({
             message:"Login Successfull",
             success:true,
             token,

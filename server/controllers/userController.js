@@ -118,3 +118,25 @@ export const getUserProfile = async(req,res)=>{
         });
     }
 };
+
+//logout
+export const logout = async(req,res) =>{
+    try{
+        await res.status(200).cookie("token","",{
+            expires: new Date(Date.now()),
+            secure:process.env.NODE_ENV === "development" ? true:false,
+            httpOnly: process.env.NODE_ENV === "development" ? true:false
+        }).send({
+            message:"LOGOUT SUCCESSFULLY",
+            success:true
+        });
+
+    }catch(error){
+        console.log(error);
+        return res.status(500).send({
+            message:"Logout error",
+            success:true,
+            error
+        })
+    }
+} 

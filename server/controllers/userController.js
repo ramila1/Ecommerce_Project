@@ -137,6 +137,38 @@ export const logout = async(req,res) =>{
             message:"Logout error",
             success:true,
             error
-        })
+        });
     }
-} 
+};
+
+//Update
+
+export const updateUser = async(req,res)=>{
+    try{
+        const user = await userModel.findById(req.user._id);
+        const {name,email,password,address,city,country,phone} = req.body;
+        if(name) user.name = name
+        if(email) user.email = email
+        if(password) user.password = password
+        if(address) user.address = address
+        if(city) user.city = city
+        if(country) user.country = country
+        if(phone) user.phone = phone
+
+        await user.save();
+
+        res.status(200).send({
+            message:"Update Successfully",
+            success:true,
+            user
+        });
+
+    }catch(error){
+        console.log(error);
+        res.status(500).send({
+            message:"Update Error",
+            success:false,
+            error
+        });
+    }
+};

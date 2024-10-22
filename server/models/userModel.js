@@ -41,7 +41,8 @@ const userSchema = new mongoose.Schema({
 },{timestamps:true});
 
 //encrypt password
-userSchema.pre('save', async function(){
+userSchema.pre('save', async function(next){
+    if(!this.isModified('password')) return next();
     this.password = await bcryptjs.hash(this.password,10);
 });
 
@@ -52,6 +53,7 @@ userSchema.methods.comparePassword = async function(plainPassword){
 
 //JWT Token
 userSchema.methods.generateToken = async function(){
+
     return await jwt.sign({_id:this._id},process.env.JWT_SECRET,{
         expiresIn:"7d",
     });

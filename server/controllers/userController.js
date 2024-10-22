@@ -208,3 +208,17 @@ export const updatePassword = async(req,res) =>{
         });
     }
 };
+//prfile pic
+export const profilePic = async(req,res)=>{
+    try{
+        const user = await userModel.findById(req.user._id)
+
+    }catch(error){
+        console.log(error),
+        res.status(500).send({
+            message:"ProfilePic Error",
+            success:true,
+            error
+        });
+    }
+};

@@ -7,12 +7,20 @@ import routeTest from './routes/routeTest.js'
 import connectDb from './config/database.js';
 import userRouter from './routes/userRoute.js';
 import cookieParser from 'cookie-parser';
+import cloudinary from 'cloudinary';
 
 //dot env config
 dotenv.config();
 
 //database connection
 connectDb();
+
+//cloudinary config
+cloudinary.v2.config({
+    cloud_name : process.env.CLOUDINARY_NAME,
+    api_key : process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET,
+});
 
 const app = express();
 

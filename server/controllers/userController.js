@@ -44,3 +44,48 @@ export const userController = async(req,res) =>{
 };
 
 export default userController;
+
+//login
+
+export const userLoginController = async (req,res) =>{
+    try{
+        const {email,password} = req.body;
+
+        if(!email || !password){
+            return res.status(500).send({
+                message:"Provide all Fields",
+                success:false
+            });
+
+        }
+        //check user
+        const user = await userModel.findOne({email});
+        if(!user){
+            return res.status(404).send({
+                message:"Email is not register",
+                success:false
+            });
+        }
+        const isCompare = await user.comparePassword(password);
+
+        if(!isCompare){
+            return res.status(500).send({
+                message:"Password is Incorrect",
+                success:false
+            });
+        }
+        return res.status(200).send({
+            message:"Login Successfull",
+            success:true,
+            user
+    
+        });
+    }catch(error){
+        console.log(error);
+        res.status(500).send({
+            message:"Login Failed",
+            success:false,
+            error
+        });
+    }
+};

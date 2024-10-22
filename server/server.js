@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import routeTest from './routes/routeTest.js'
 import connectDb from './config/database.js';
+import userRouter from './routes/userRoute.js';
 
 //dot env config
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(cors());
 
 //routes
 app.use('/api', routeTest);
+app.use('/api',userRouter);
 
 app.get('/',(req,res)=>{
     res.statusCode = 200,

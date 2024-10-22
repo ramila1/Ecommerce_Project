@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import routeTest from './routes/routeTest.js'
 import connectDb from './config/database.js';
 import userRouter from './routes/userRoute.js';
+import cookieParser from 'cookie-parser';
 
 //dot env config
 dotenv.config();
@@ -21,6 +22,7 @@ const port = process.env.PORT || 5000;
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 //routes
 app.use('/api', routeTest);
@@ -33,5 +35,5 @@ app.get('/',(req,res)=>{
 });
 
 app.listen(port,()=>{
-    console.log(`server is run at https://ecommerce:${port}`.bgCyan.white);
+    console.log(`server is running on PORT https://ecommerce:${port} on ${process.env.NODE_ENV} Mode`.bgCyan.white);
 });

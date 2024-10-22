@@ -1,4 +1,5 @@
 import userModel from '../models/userModel.js';
+import cookieParser from 'cookie-parser';
 export const userController = async(req,res) =>{
     try{
         const {name,email,password,address,city,country,phone} = req.body;
@@ -28,6 +29,7 @@ export const userController = async(req,res) =>{
             country,
             phone
         });
+
         res.status(201).send({
             message:"Registration Success",
             success:true,
@@ -74,9 +76,11 @@ export const userLoginController = async (req,res) =>{
                 success:false
             });
         }
-        return res.status(200).send({
+        const token = await user.generateToken();
+        return res.status(200).cookie("token",token).send({
             message:"Login Successfull",
             success:true,
+            token,
             user
     
         });

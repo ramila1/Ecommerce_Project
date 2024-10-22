@@ -28,7 +28,7 @@ export const userController = async(req,res) =>{
             country,
             phone
         });
-        res.status(201).res.send({
+        res.status(201).send({
             message:"Registration Success",
             success:true,
             user

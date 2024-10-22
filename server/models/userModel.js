@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcryptjs from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -29,13 +30,24 @@ const userSchema = new mongoose.Schema({
     },
     phone:{
         type:String,
-        require:[true,'Phone number is required']
+        require:[true,'Phone number is required'],
+        unique:[true,'Check your Phone Number']
     },
     profilePicture:{
         type:String
     }
 
 },{timestamps:true});
+
+//encrypt password
+userSchema.pre('save', async function(){
+    this.password = await bcryptjs.hash(this.password,10);
+});
+
+//decrypt password
+userSchema.methods.comparePassword = async function(plainPassword){
+    return await bcryptjs.compare(plainPassword,this.password);
+};
 
 export const userModel = mongoose.model("Users",userSchema);
 export default userModel;

@@ -1,5 +1,7 @@
 import userModel from '../models/userModel.js';
 import cookieParser from 'cookie-parser';
+import { getDataUri } from '../utils/features.js';
+import cloudinary from 'cloudinary';
 export const userController = async(req,res) =>{
     try{
         const {name,email,password,address,city,country,phone} = req.body;
@@ -211,13 +213,28 @@ export const updatePassword = async(req,res) =>{
 //prfile pic
 export const profilePic = async(req,res)=>{
     try{
-        const user = await userModel.findById(req.user._id)
+        const user = await userModel.findById(req.user._id);
+        //get file
+        const getPic = await getDataUri(req.file);
+        // //delete existing photo
+        // const delPic = await cloudinary.v2.uploader.destroy(user.profilePicture.public_id);
+        //upload
+        const uploadpic = await cloudinary.v2.uploader.upload(getPic.content);
+        user.profilePicture ={
+            public_id:uploadpic.public_id,
+            url:uploadpic.url
+        };
+        await user.save();
+        res.status(200).send({
+            message:"upload image",
+            success:true
+        });
 
     }catch(error){
         console.log(error),
         res.status(500).send({
             message:"ProfilePic Error",
-            success:true,
+            success:false,
             error
         });
     }

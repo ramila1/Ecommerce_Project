@@ -1,5 +1,5 @@
 import express from 'express';
-import {getUserProfile, logout, updatePassword, updateUser, userController, userLoginController} from '../controllers/userController.js';
+import {getUserProfile, logout, updatePassword, updateUser, userController, userLoginController, profilePic} from '../controllers/userController.js';
 import { isAuth } from '../middleswares/authMiddleware.js';
 import { upload } from '../middleswares/multer.js';
 
@@ -24,6 +24,6 @@ userRouter.put('/update',isAuth,updateUser);
 userRouter.put('/update-password',isAuth,updatePassword);
 
 //update profile pic
-userRouter.put('/profile-pic',upload,()=>{});
+userRouter.put('/update-profile-pic',isAuth,upload,profilePic);
 
 export default userRouter;

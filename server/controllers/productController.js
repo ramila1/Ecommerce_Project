@@ -84,7 +84,7 @@ export const createProduct = async(req,res)=>{
             description,
             price,
             stock,
-            images:image,
+            images:[image],
         });
 
         res.status(200).send({
@@ -150,13 +150,13 @@ export const updateProductImage = async(req,res)=>{
             });
         }
         const file = getDataUri(req.file);
-        const delImage = await cloudinary.v2.uploader.destroy(product.images.public_id);
         const cloudinary_data = await cloudinary.v2.uploader.upload(file.content);
-        product.images = {
+        const image = {
             public_id : cloudinary_data.public_id,
             url : cloudinary_data.url
         }
 
+        product.images.push(image)
         await product.save();
         res.status(200).send({
             message:"Update product image successfully",

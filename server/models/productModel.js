@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-export const productSchema = mongoose.Schema({
+export const productSchema = new mongoose.Schema({
     name:{
         type:String,
         required:[true,'Name is REquired']

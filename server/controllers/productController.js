@@ -84,7 +84,7 @@ export const createProduct = async(req,res)=>{
             description,
             price,
             stock,
-            images:[image],
+            images:image,
         });
 
         res.status(200).send({
@@ -133,6 +133,41 @@ export const updateProduct = async(req,res)=>{
         console.log(error),
         res.status(500).send({
             message:"Update error",
+            success:false,
+            error,
+        });
+    }
+};
+
+//update product image
+export const updateProductImage = async(req,res)=>{
+    try{
+        const product = await productModel.findById(req.params.id);
+        if(!product){
+            return res.status(500).send({
+                message:"Product is not found",
+                success:false
+            });
+        }
+        const file = getDataUri(req.file);
+        const delImage = await cloudinary.v2.uploader.destroy(product.images.public_id);
+        const cloudinary_data = await cloudinary.v2.uploader.upload(file.content);
+        product.images = {
+            public_id : cloudinary_data.public_id,
+            url : cloudinary_data.url
+        }
+
+        await product.save();
+        res.status(200).send({
+            message:"Update product image successfully",
+            success:true,
+            product
+        });
+
+    }catch(error){
+        console.log(error),
+        res.status(500).send({
+            message:"Update product image error",
             success:false,
             error,
         });

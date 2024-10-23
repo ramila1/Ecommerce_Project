@@ -1,7 +1,9 @@
 import express from 'express';
-
+import { getAllProductController } from '../controllers/productController.js';
 export const productRouter = express.Router();
 
-productRouter.post('/add',()=>{});
+productRouter.get('/getall-product',getAllProductController);
+
+productRouter.get('/get-product/:id',()=>{});
 
 export default productRouter;

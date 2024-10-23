@@ -217,7 +217,7 @@ export const profilePic = async(req,res)=>{
         //get file
         const getPic = await getDataUri(req.file);
         // //delete existing photo
-        // const delPic = await cloudinary.v2.uploader.destroy(user.profilePicture.public_id);
+        const delPic = await cloudinary.v2.uploader.destroy(user.profilePicture.public_id);
         //upload
         const uploadpic = await cloudinary.v2.uploader.upload(getPic.content);
         user.profilePicture ={

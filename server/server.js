@@ -8,6 +8,7 @@ import connectDb from './config/database.js';
 import userRouter from './routes/userRoute.js';
 import cookieParser from 'cookie-parser';
 import cloudinary from 'cloudinary';
+import productRouter from './routes/productRoute.js';
 
 //dot env config
 dotenv.config();
@@ -34,7 +35,12 @@ app.use(cookieParser());
 
 //routes
 app.use('/api', routeTest);
+
+//profile route
 app.use('/api',userRouter);
+
+//product route
+app.use('/product',productRouter);
 
 app.get('/',(req,res)=>{
     res.statusCode = 200,

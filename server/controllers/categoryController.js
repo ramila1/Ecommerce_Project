@@ -27,6 +27,31 @@ export const getAllCategoryController = async (req, res) => {
     }
 };
 
+//get one category
+export const getOneCategoryController = async(req,res)=>{
+    try{
+        const category = await categoryModel.findById(req.params.id);
+        if(!category){
+            return res.status(500).send({
+                message:'Category not found',
+                success:false
+            });
+        }
+        await res.status(200).send({
+            message:"Category fetched successfully",
+            success:true,
+            category
+        });
+    }catch(error){
+        console.log(error),
+        res.status(500).send({
+            message:"Error while fetching single category",
+            success: false,
+            error,
+        });
+    }
+};
+
 //create category 
 export const createCategoryController = async (req, res) => {
     try {
@@ -56,3 +81,4 @@ export const createCategoryController = async (req, res) => {
             });
     }
 };
+

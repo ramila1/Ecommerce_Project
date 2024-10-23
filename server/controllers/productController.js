@@ -149,6 +149,12 @@ export const updateProductImage = async(req,res)=>{
                 success:false
             });
         }
+        if(!req.file){
+            return res.status(500).send({
+                message:"Product image is not fould",
+                success:false
+            });
+        }
         const file = getDataUri(req.file);
         const cloudinary_data = await cloudinary.v2.uploader.upload(file.content);
         const image = {
@@ -168,6 +174,86 @@ export const updateProductImage = async(req,res)=>{
         console.log(error),
         res.status(500).send({
             message:"Update product image error",
+            success:false,
+            error,
+        });
+    }
+};
+
+// delete product image
+export const deleteImage = async(req,res)=>{
+    try{
+        const product = await productModel.findById(req.params.id);
+        if(!product){
+            return res.status(500).send({
+                message:"Product image is not found",
+                success:false
+            });
+        }
+        const id = req.query.id;
+        if(!id){
+            return res.status(500).send({
+                message:"Image Id not found",
+                success:false
+            });
+        }
+        let isExist = -1;
+        product.images.forEach((item,index)=>{
+            if(item._id.toString() === id.toString()) isExist = index;
+        });
+
+        if(isExist<0){
+            return res.status(500).send({
+                message:"Image is not found",
+                success:false
+            });
+        }
+        await cloudinary.v2.uploader.destroy(product.images[isExist].public_id);
+        product.images.splice(isExist,1);
+        await product.save();
+
+        return res.status(200).send({
+            message:"Product delete successfully",
+            success:true
+        });
+    }catch(error){
+        console.log(error),
+        res.status(500).send({
+            message:"Error while delete image",
+            success:false,
+            error,
+        });
+    }
+};
+
+//delete product
+export const deleteProduct = async(req,res)=>{
+    try{
+        const product = await productModel.findById(req.params.id);
+        if(!product){
+            return res.status(500).send({
+                message:"Product is not found",
+                success:false
+            });
+
+        }
+        for(let index = 0; index<product.images.length;index++)
+            await cloudinary.v2.uploader.destroy(product.images[index].public_id);
+
+        await product.deleteOne();
+        res.status(200).send({
+            message:"Delete product successfully",
+            success:true
+        });
+        res.status(200).send({
+            message:"Delete Product Successfully",
+            success:true
+        });
+
+    }catch(error){
+        console.log(error),
+        res.status(500).send({
+            message:"Error while deleting product",
             success:false,
             error,
         });

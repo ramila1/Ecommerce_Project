@@ -9,6 +9,7 @@ import userRouter from './routes/userRoute.js';
 import cookieParser from 'cookie-parser';
 import cloudinary from 'cloudinary';
 import productRouter from './routes/productRoute.js';
+import categoryRouter from './routes/categoryRoute.js';
 
 //dot env config
 dotenv.config();
@@ -41,6 +42,9 @@ app.use('/api',userRouter);
 
 //product route
 app.use('/product',productRouter);
+
+//category route
+app.use('/category',categoryRouter);
 
 app.get('/',(req,res)=>{
     res.statusCode = 200,

@@ -64,7 +64,7 @@ export const createCategoryController = async (req, res) => {
                 success: false
             });
         }
-        await categoryModel.create({category_name});
+        await categoryModel.create({ category_name });
 
         res.status(200).send({
             message: "Category created",
@@ -91,7 +91,7 @@ export const deleteCategoryController = async (req, res) => {
                 success: false
             });
         }
-        const products = await productModel.find({category : category._id});
+        const products = await productModel.find({ category: category._id });
         for (let index = 0; index < products.length; index++) {
             const product = products[index]
             product.category = undefined
@@ -121,14 +121,14 @@ export const updateCategoryController = async (req, res) => {
                 success: false,
             });
         }
-        const { updatedCategory} = req.body
-        const products = productModel.findById({category: category._id});
-        for (let index = 0; index < products.length; index++){
+        const { updatedCategory } = req.body
+        const products = productModel.findById({ category: category._id });
+        for (let index = 0; index < products.length; index++) {
             const product = products[index];
             product.category = updatedCategory;
             await product.save();
         }
-        if(updatedCategory) category.category_name = updatedCategory
+        if (updatedCategory) category.category_name = updatedCategory
         await category.save();
         res.status(200).send({
             message: 'Category updated successfully',
@@ -136,18 +136,18 @@ export const updateCategoryController = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        if(error.name === "CastError"){
+        if (error.name === "CastError") {
             return res.status(500).send({
-                message:"Invalis Id",
-                success:false,
+                message: "Invalis Id",
+                success: false,
             })
         }
-            res.status(500).send({
-                message: "Error while updating category",
-                success: false,
-                error,
+        res.status(500).send({
+            message: "Error while updating category",
+            success: false,
+            error,
 
-            });
+        });
     }
 };
 

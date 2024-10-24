@@ -1,7 +1,7 @@
-export const controllerTest = (req,res)=>{
+export const controllerTest = (req, res) => {
     res.statusCode = 200;
     res.send({
-        message:"Test Routes",
+        message: "Test Routes",
         success: true
     });
 };

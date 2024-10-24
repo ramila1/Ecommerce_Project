@@ -4,10 +4,10 @@ import { getDataUri } from '../utils/features.js';
 import cloudinary from 'cloudinary';
 export const userController = async(req,res) =>{
     try{
-        const {name,email,password,address,city,country,phone} = req.body;
+        const {name,email,password,address,city,country,phone,answer} = req.body;
 
         //validation 
-        if(!name || !email || !password || !address || !city || !country){
+        if(!name || !email || !password || !address || !city || !country ||!answer){
             return res.staus(500).send({
                 message:"Provide All Fields",
                 success:false,
@@ -29,7 +29,8 @@ export const userController = async(req,res) =>{
             address,
             city,
             country,
-            phone
+            phone,
+            answer
         });
 
         res.status(201).send({
@@ -236,6 +237,42 @@ export const profilePic = async(req,res)=>{
             message:"ProfilePic Error",
             success:false,
             error
+        });
+    }
+};
+
+//password reset
+export const passwordResetController = async(req,res)=>{
+    try{
+        const {email,newPassword,answer} = req.body
+        if(!email || !newPassword || !answer){
+            return res.status(500).send({
+                message:'Provide all fields',
+                success:false
+            })
+        }
+        const user = await userModel.findOne({email,answer})
+        if(!user){
+         return res.status(500).send({
+                message:'Invalid user and answer is not found',
+                success:false
+            });
+        }
+    
+        user.password = newPassword
+        await user.save();
+
+        res.status(200).send({
+            message:'password is reset',
+            success:true,
+            user
+            });
+    }catch(error){
+        console.log(error),
+        res.status(500).send({
+            message:'Error while reset password',
+            success:false,
+            error,
         });
     }
 };

@@ -131,8 +131,8 @@ export const paymentController = async(req,res)=>{
             });
         }
         const {client_secret} = await stripe.paymentIntents.create({
-            amount: Number(totalAmount),
-            currency:'npr'
+            amount: Number(totalAmount*100),
+            currency:'usd'
         });
         res.status(200).send({
             client_secret,

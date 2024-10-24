@@ -12,3 +12,14 @@ export const isAuth = async(req,res,next)=>{
     req.user  = await userModel.findById(decodeData._id);
     next();
 };
+
+//admin middleware
+export const isAdmin = async (req,res,next)=>{
+    if(req.user.role !== "admin"){
+        return res.status(401).send({
+            message:"admin only",
+            success:false
+        });
+    }
+    next();
+};

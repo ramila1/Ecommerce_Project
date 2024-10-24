@@ -74,7 +74,7 @@ const orderSchema = new mongoose.Schema({
     },
     items_total_amount :{
         type: String,
-        required:[type,'Total Amount is required']
+        required:[true,'Total Amount is required']
     },
     order_status:{
         type:String,

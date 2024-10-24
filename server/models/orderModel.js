@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
-    shippingInformation:{
+    shipping_information:{
         address:{
             type:String,
             required:[true,'Address name is required']
@@ -15,19 +15,23 @@ const orderSchema = new mongoose.Schema({
             required:[true,'Country name is required']
         }
     },
-    order_product_info:[
+    order_products:[
         {
-        product_name:{
+        name:{
             type:String,
             required:[true,'Product name is required']
         },
-        product_price:{
-            type:String,
+        price:{
+            type:Number,
             required:[true,'Product price is required']
         },
-        product_quantity:{
-            type:String,
+        quantity:{
+            type:Number,
             required:[true,'Product quatity is required']
+        },
+        image:{
+            type:String,
+            required:[true,'Product image is required']
         },
         product:{
             type:mongoose.Schema.Types.ObjectId,
@@ -50,7 +54,7 @@ const orderSchema = new mongoose.Schema({
         default:"COD"
     },
     Paid:Date,
-    payment_Info:{
+    payment_info:{
         id:String,
         status:String
 
@@ -65,15 +69,15 @@ const orderSchema = new mongoose.Schema({
         require:[true,'item price is required']
     },
     item_tax:{
-        type:String,
+        type:Number,
         require:[true,'item tax is required'],
     },
     item_shipping_cost:{
-        type:String,
+        type:Number,
         required:[true,'Shipping cost is required']
     },
     items_total_amount :{
-        type: String,
+        type: Number,
         required:[true,'Total Amount is required']
     },
     order_status:{

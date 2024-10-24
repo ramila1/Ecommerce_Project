@@ -26,5 +26,4 @@ userRouter.put('/update-password',isAuth,updatePassword);
 //update profile pic
 userRouter.put('/update-profile-pic',isAuth,upload,profilePic);
 
-
 export default userRouter;

@@ -148,3 +148,41 @@ export const paymentController = async(req,res)=>{
         });
     }
 }
+
+//change order status
+export const orderStatusController = async(req,res)=>{
+    try{
+        const order = await orderModel.findById(req.params.id);
+
+        
+        if(!order){
+            return req.status(500).send({
+                message:'Order is not found',
+                success:false
+            });
+        }
+        if(order.order_status === "processing") 
+            {order.order_status = "shipped"}
+        else if(order.order_status ==="shipped") {order.order_status = "delivered"
+        order.Delivered_at = new Date(Date.now());
+        }
+        else {
+            return res.status(500).send({
+                message : "Order is already Delivered.",
+                success:false
+            });
+        }
+        await order.save();
+        res.status(200).send({
+            message:'Order Status Chnaged',
+            success:true
+        });
+    }catch(error){
+        console.log(error),
+        res.status(500).send({
+            message:'Error while chnaging order status',
+            success:false,
+            error,
+        });
+    }
+};

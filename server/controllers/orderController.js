@@ -1,10 +1,12 @@
 import orderModel from "../models/orderModel.js";
 import productModel from "../models/productModel.js";
+import userModel from "../models/userModel.js";
 import { getDataUri } from "../utils/features.js";
 import cloudinary from 'cloudinary';
+import { stripe } from "../server.js";
 export const getAllOrderController = async(req,res)=>{
     try{
-        const order = await orderModel.find*({});
+        const order = await orderModel.find({});
         if(!order){
             return res.status(500).send({
                 message:'Order is not found',
@@ -14,6 +16,7 @@ export const getAllOrderController = async(req,res)=>{
         await res.status(200).send({
             message:'All orders are fetched',
             success:true,
+            totalorder: order.length,
             order
         })
     }catch(error){
@@ -38,7 +41,8 @@ export const getSingleOrderController = async(req,res)=>{
         }
         await res.status(200).send({
             message:'Order found',
-            success:true
+            success:true,
+            order
         });
 
     }catch(error){
@@ -113,3 +117,34 @@ export const createOrderController = async(req,res)=>{
         });
     }
 };
+
+//payment
+export const paymentController = async(req,res)=>{
+    try{
+        //get amount
+        const {totalAmount} = req.body
+        //validation
+        if(!totalAmount){
+            return res.status(404).send({
+                message:"Total Amount is require",
+                success:false,
+            });
+        }
+        const {client_secret} = await stripe.paymentIntents.create({
+            amount: Number(totalAmount),
+            currency:'npr'
+        });
+        res.status(200).send({
+            client_secret,
+            success:true,
+        });
+
+    }catch(error){
+        console.log(error),
+        res.status(500).send({
+            message:'Error while doing payment',
+            success:false,
+            error,
+        });
+    }
+}

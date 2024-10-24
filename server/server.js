@@ -11,6 +11,7 @@ import cloudinary from 'cloudinary';
 import productRouter from './routes/productRoute.js';
 import categoryRouter from './routes/categoryRoute.js';
 import orderRouter from './routes/orderRoute.js';
+import Stripe from 'stripe';
 
 //dot env config
 dotenv.config();
@@ -18,6 +19,8 @@ dotenv.config();
 //database connection
 connectDb();
 
+//stripe configuration
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 //cloudinary config
 cloudinary.v2.config({
     cloud_name : process.env.CLOUDINARY_NAME,

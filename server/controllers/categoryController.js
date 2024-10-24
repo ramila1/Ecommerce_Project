@@ -57,21 +57,18 @@ export const getOneCategoryController = async (req, res) => {
 //create category 
 export const createCategoryController = async (req, res) => {
     try {
-        const { name } = req.body;
-        if (!name) {
+        const { category_name } = req.body;
+        if (!category_name) {
             return res.status(500).send({
                 message: "Category name must have to provide",
                 success: false
             });
         }
-        const category = await categoryModel.create({
-            name
-        });
-        await category.save();
+        await categoryModel.create({category_name});
+
         res.status(200).send({
             message: "Category created",
-            success: true,
-            category
+            success: true
         });
 
     } catch (error) {
@@ -94,7 +91,7 @@ export const deleteCategoryController = async (req, res) => {
                 success: false
             });
         }
-        const products = await productModel.find(category = category._id);
+        const products = await productModel.find({category : category._id});
         for (let index = 0; index < products.length; index++) {
             const product = products[index]
             product.category = undefined
@@ -118,30 +115,39 @@ export const deleteCategoryController = async (req, res) => {
 export const updateCategoryController = async (req, res) => {
     try {
         const category = await categoryModel.findById(req.params.id);
-        const { name } = req.body;
         if (!category) {
             return res.status(500).send({
                 message: "Category is not found",
                 success: false,
             });
         }
-        const products = await productModel.findById(category = category._id);
+        const { updatedCategory} = req.body
+        const products = productModel.findById({category: category._id});
         for (let index = 0; index < products.length; index++){
             const product = products[index];
-            product.category = name;
-            await product.save()
+            product.category = updatedCategory;
+            await product.save();
         }
+        if(updatedCategory) category.category_name = updatedCategory
         await category.save();
         res.status(200).send({
             message: 'Category updated successfully',
             success: true
         });
     } catch (error) {
-        console.log(error),
+        console.log(error);
+        if(error.name === "CastError"){
+            return res.status(500).send({
+                message:"Invalis Id",
+                success:false,
+            })
+        }
             res.status(500).send({
                 message: "Error while updating category",
                 success: false,
                 error,
+
             });
     }
 };
+

@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser';
 import cloudinary from 'cloudinary';
 import productRouter from './routes/productRoute.js';
 import categoryRouter from './routes/categoryRoute.js';
+import orderRouter from './routes/orderRoute.js';
 
 //dot env config
 dotenv.config();
@@ -45,6 +46,9 @@ app.use('/product',productRouter);
 
 //category route
 app.use('/category',categoryRouter);
+
+//order route
+app.use('/order',orderRouter);
 
 app.get('/',(req,res)=>{
     res.statusCode = 200,

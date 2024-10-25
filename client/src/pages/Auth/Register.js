@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../../components/Layout/Layout";
-
+import { toast } from "react-toastify";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -25,6 +25,7 @@ const Register = () => {
       profilePicture,
       answer
     );
+    toast.success("Register Success");
   };
   return (
     <Layout>

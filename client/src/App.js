@@ -4,6 +4,7 @@ import PageNotFound from "./pages/PageNotFound";
 import Category from "./pages/Category";
 import Register from "./pages/Auth/Register";
 import Login from "./pages/Auth/Login";
+
 function App() {
   return (
     <>

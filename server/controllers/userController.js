@@ -4,7 +4,7 @@ import { getDataUri } from '../utils/features.js';
 import cloudinary from 'cloudinary';
 export const userController = async (req, res) => {
     try {
-        const { name, email, password, address, city, country, phone, answer } = req.body;
+        const { name, email, password, address, city, country, phone, role, answer } = req.body;
 
         //validation 
         if (!name || !email || !password || !address || !city || !country || !answer) {
@@ -30,7 +30,8 @@ export const userController = async (req, res) => {
             city,
             country,
             phone,
-            answer
+            answer,
+            role
         });
 
         res.status(201).send({
@@ -180,6 +181,7 @@ export const updateUser = async (req, res) => {
 export const updatePassword = async (req, res) => {
     try {
         const user = await userModel.findById(req.user._id);
+        
         const { oldpassword, newpassword } = req.body;
         if (!oldpassword || !newpassword) {
             return res.status(404).send({
@@ -196,6 +198,7 @@ export const updatePassword = async (req, res) => {
             });
         }
         user.password = newpassword;
+        user.password = undefined;
         user.save();
         res.status(200).send({
             message: "Password Update Successfully",

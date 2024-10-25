@@ -1,12 +1,13 @@
 import './App.css';
-import Layout from './components/layout/layout';
+
+import layout from './../components/Layout/Layout';
 
 function App() {
   return (
     <>
-    <Layout>
+    <layout></layout>
     <h1>Ecommerce</h1>
-    </Layout>
+
    
     </>
   );

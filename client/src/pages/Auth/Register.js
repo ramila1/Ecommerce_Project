@@ -1,154 +1,119 @@
 import React, { useState } from "react";
 import Layout from "../../components/Layout/Layout";
-import { toast } from "react-toastify";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
   const [answer, setAnswer] = useState("");
-  const [profilePicture, setProfilePicture] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  // form function
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(
-      name,
-      email,
-      password,
-      phone,
-      address,
-      city,
-      country,
-      profilePicture,
-      answer
-    );
-    toast.success("Register Success");
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API}/api/register`,
+        {
+          name,
+          email,
+          password,
+          phone,
+          address,
+          answer,
+        }
+      );
+      if (res && res.data.success) {
+        toast.success(res.data && res.data.message);
+        navigate("/login");
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
   };
+
   return (
-    <Layout>
-      <div className="register">
+    <Layout title="Register - Ecommer App">
+      <div className="form-container ">
         <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="exampleInputName" className="form-label">
-              Name
-            </label>
+          <h4 className="title">REGISTER FORM</h4>
+          <div className="mb-3">
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="form-control"
-              id="exampleInputName"
+              id="exampleInputEmail1"
+              placeholder="Enter Your Name"
               required
+              autoFocus
             />
           </div>
-          <div>
-            <label htmlFor="exampleInputEmail" className="form-label">
-              Email
-            </label>
+          <div className="mb-3">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="form-control"
-              id="exampleInputEmail"
+              id="exampleInputEmail1"
+              placeholder="Enter Your Email "
               required
             />
           </div>
-          <div>
-            <label htmlFor="exampleInputPassword1" className="form-label">
-              Password
-            </label>
+          <div className="mb-3">
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="form-control"
               id="exampleInputPassword1"
+              placeholder="Enter Your Password"
               required
             />
           </div>
-          <div>
-            <label htmlFor="exampleInputPhone" className="form-label">
-              Phone
-            </label>
+          <div className="mb-3">
             <input
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="form-control"
-              id="exampleInputPhone"
+              id="exampleInputEmail1"
+              placeholder="Enter Your Phone"
               required
             />
           </div>
-          <div>
-            <label htmlFor="exampleInputAddress" className="form-label">
-              Address
-            </label>
+          <div className="mb-3">
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               className="form-control"
-              id="exampleInputAddress"
+              id="exampleInputEmail1"
+              placeholder="Enter Your Address"
               required
             />
           </div>
-          <div>
-            <label htmlFor="exampleInputCity" className="form-label">
-              City
-            </label>
-            <input
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="form-control"
-              id="exampleInputCity"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="exampleInputCountry" className="form-label">
-              Country
-            </label>
-            <input
-              type="text"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              className="form-control"
-              id="exampleInputCountry"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="exampleInputAnswer" className="form-label">
-              What is your Favourite Food?
-            </label>
+          <div className="mb-3">
             <input
               type="text"
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               className="form-control"
-              id="exampleInputAnswer"
+              id="exampleInputEmail1"
+              placeholder="What is Your Favorite sports"
               required
             />
           </div>
-          <div>
-            <label htmlFor="exampleInputPicturee" className="form-label">
-              Profile Picture
-            </label>
-            <input
-              type="file"
-              value={profilePicture}
-              onChange={(e) => setProfilePicture(e.target.value)}
-              className="form-control"
-              id="exampleInputPicture"
-            />
-          </div>
           <button type="submit" className="btn btn-primary">
-            Submit
+            REGISTER
           </button>
         </form>
       </div>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=PT+Serif&family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Poppins&display=swap');
 *{
   margin: 0;
   padding: 0;
@@ -15,3 +15,9 @@
   font-weight: 400;
   font-style: normal;
 } */
+
+.navbar{
+  font-size: 17px;
+  line-height:26px;
+  text-transform: uppercase;
+}

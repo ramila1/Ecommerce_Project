@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from "react";
-import AdminMenu from "../../components/Layout/AdminMenu";
 import Layout from "../../components/Layout/Layout";
-import axios from "axios";
+import AdminMenu from "../../components/Layout/AdminMenu";
 import toast from "react-hot-toast";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
-const Users = () => {
-  const [users, setUsers] = useState([]);
+const Products = () => {
+  const [products, setProducts] = useState([]);
 
-  const getAllUsers = async () => {
+  const getAllProducts = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_API}/api/get-all-users`,
+        `${process.env.REACT_APP_API}/product/getall-product`,
         { withCredentials: true }
       );
-      console.log("Fetched users:", res.data.users); // Log the users to check for _id
-      setUsers(res.data.users);
+      setProducts(res.data.products);
     } catch (error) {
-      console.error("Error fetching users:", error);
-      toast.error("Something went wrong in getting users");
+      console.log(error);
+      toast.error("Something went wrong in getting products");
     }
   };
 
   useEffect(() => {
-    getAllUsers();
+    getAllProducts();
   }, []);
 
   return (
@@ -33,21 +32,19 @@ const Users = () => {
           <AdminMenu />
         </div>
         <div className="col-md-9">
-          <h1 className="text-center">All Users Lists</h1>
+          <h1 className="text-center">All Products Lists</h1>
           <div className="d-flex flex-wrap">
-            {users?.map((p) => (
-              <Link key={p._id} to={`/admin/single-user/${p._id}`}>
-                {" "}
-                {/* Changed p.id to p._id */}
+            {products?.map((p) => (
+              <Link key={p._id} to={`/admin/products/${p.slug}`}>
                 <div className="card m-2" style={{ width: "18rem" }}>
                   <img
-                    src={p.profilePicture?.url || "/images/default_image.jpg"}
+                    src={p.images?.[0]?.url || "/images/default_image.jpg"}
                     className="card-img-top"
                     alt={p.name}
                   />
                   <div className="card-body">
                     <h5 className="card-title">{p.name}</h5>
-                    <p className="card-text">{p.email}</p>
+                    <p className="card-text">{p.description}</p>
                   </div>
                 </div>
               </Link>
@@ -59,4 +56,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Products;

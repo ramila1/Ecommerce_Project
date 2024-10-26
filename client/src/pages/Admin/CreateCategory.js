@@ -41,7 +41,7 @@ const CreateCategory = () => {
         { withCredentials: true }
       );
       if (res.data?.success) {
-        setCategories(res.data.category);
+        setCategories(res.data?.category);
       }
     } catch (error) {
       console.log(error);

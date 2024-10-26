@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
 import productModel from "../models/productModel.js";
 import { getDataUri } from "../utils/features.js";
@@ -71,7 +72,10 @@ export const createCategoryController = async (req, res) => {
       });
     }
 
-    const category = await categoryModel.create({ category_name });
+    const category = await new categoryModel({
+      category_name,
+      slug: slugify(category_name),
+    }).save();
 
     res.status(200).send({
       message: "Category created",

@@ -8,6 +8,8 @@ import {
   userLoginController,
   profilePic,
   passwordResetController,
+  getAllUserController,
+  getSingleUser,
 } from "../controllers/userController.js";
 import { isAdmin, isAuth } from "../middleswares/authMiddleware.js";
 import { upload } from "../middleswares/multer.js";
@@ -38,6 +40,9 @@ userRouter.put("/update-profile-pic", isAuth, upload, profilePic);
 //forget password
 userRouter.put("/reset-password", passwordResetController);
 
+userRouter.get("/get-all-users", isAuth, isAdmin, getAllUserController);
+
+userRouter.get("/get-single-user/:id", isAuth, getSingleUser);
 //protect-route
 userRouter.get("/user-auth", isAuth, (req, res) => {
   res.status(200).send({ ok: true });

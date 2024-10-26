@@ -6,6 +6,10 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: [true, "category is required"],
     },
+    slug: {
+      type: String,
+      lowercase: true,
+    },
   },
   { timestamps: true }
 );

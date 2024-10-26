@@ -299,3 +299,58 @@ export const passwordResetController = async (req, res) => {
       });
   }
 };
+
+export const getAllUserController = async (req, res) => {
+  try {
+    const users = await userModel.find({});
+
+    res.status(200).send({
+      message: "All user is fetched",
+      success: true,
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      message: "Error during fetch user",
+      success: false,
+      error,
+    });
+  }
+};
+
+export const getSingleUser = async (req, res) => {
+  try {
+    // Assuming the user ID is passed as a URL parameter
+    const { id } = req.params;
+
+    const user = await userModel.findOne({ _id: id });
+    console.log("User found:", user);
+
+    if (!user) {
+      return res.status(404).send({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    res.status(200).send({
+      message: "User fetched successfully",
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.log("Error:", error);
+    if (error.name === "CastError") {
+      return res.status(500).send({
+        message: "Invalid ID format",
+        success: false,
+      });
+    }
+    res.status(500).send({
+      message: "Error during fetching single user",
+      success: false,
+      error,
+    });
+  }
+};

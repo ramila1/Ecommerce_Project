@@ -1,154 +1,158 @@
 import categoryModel from "../models/categoryModel.js";
 import productModel from "../models/productModel.js";
 import { getDataUri } from "../utils/features.js";
-import cloudinary from 'cloudinary';
+import cloudinary from "cloudinary";
 
 export const getAllCategoryController = async (req, res) => {
-    try {
-        const category = await categoryModel.find({});
-        if (!category) {
-            return res.status(500).send({
-                message: "Category Not Found",
-                success: false,
-
-            });
-        }
-        await res.status(200).send({
-            message: "Fetch All Category",
-            success: true,
-            total_category: category.length,
-            category
-        });
-    } catch (error) {
-        console.log(error),
-            res.status(500).send({
-                message: "Error while festching all category",
-                success: false,
-                error,
-            });
+  try {
+    const category = await categoryModel.find({});
+    if (!category) {
+      return res.status(500).send({
+        message: "Category Not Found",
+        success: false,
+      });
     }
+    await res.status(200).send({
+      message: "Fetch All Category",
+      success: true,
+      total_category: category.length,
+      category,
+    });
+  } catch (error) {
+    console.log(error),
+      res.status(500).send({
+        message: "Error while festching all category",
+        success: false,
+        error,
+      });
+  }
 };
 
 //get one category
 export const getOneCategoryController = async (req, res) => {
-    try {
-        const category = await categoryModel.findById(req.params.id);
-        if (!category) {
-            return res.status(500).send({
-                message: 'Category not found',
-                success: false
-            });
-        }
-        await res.status(200).send({
-            message: "Category fetched successfully",
-            success: true,
-            category
-        });
-    } catch (error) {
-        console.log(error),
-            res.status(500).send({
-                message: "Error while fetching single category",
-                success: false,
-                error,
-            });
+  try {
+    const category = await categoryModel.findById(req.params.id);
+    if (!category) {
+      return res.status(500).send({
+        message: "Category not found",
+        success: false,
+      });
     }
+    await res.status(200).send({
+      message: "Category fetched successfully",
+      success: true,
+      category,
+    });
+  } catch (error) {
+    console.log(error),
+      res.status(500).send({
+        message: "Error while fetching single category",
+        success: false,
+        error,
+      });
+  }
 };
 
-//create category 
+//create category
 export const createCategoryController = async (req, res) => {
-    try {
-        const { category_name } = req.body;
-        if (!category_name) {
-            return res.status(500).send({
-                message: "Category name must have to provide",
-                success: false
-            });
-        }
-        await categoryModel.create({ category_name });
-
-        res.status(200).send({
-            message: "Category created",
-            success: true
-        });
-
-    } catch (error) {
-        console.log(error),
-            res.status(500).send({
-                message: "Error while creating category",
-                success: false,
-                error,
-            });
+  try {
+    const { category_name } = req.body;
+    if (!category_name) {
+      return res.status(500).send({
+        message: "Category name must have to provide",
+        success: false,
+      });
     }
+    const existingCategory = await categoryModel.findOne({ category_name });
+    if (existingCategory) {
+      return res.status(500).send({
+        success: false,
+        message: "Category already exist",
+      });
+    }
+
+    const category = await categoryModel.create({ category_name });
+
+    res.status(200).send({
+      message: "Category created",
+      success: true,
+      category,
+    });
+  } catch (error) {
+    console.log(error),
+      res.status(500).send({
+        message: "Error while creating category",
+        success: false,
+        error,
+      });
+  }
 };
 
 //delete category
 export const deleteCategoryController = async (req, res) => {
-    try {
-        const category = await categoryModel.findById(req.params.id);
-        if (!category) {
-            return res.status(500).send({
-                message: "Category not found",
-                success: false
-            });
-        }
-        const products = await productModel.find({ category: category._id });
-        for (let index = 0; index < products.length; index++) {
-            const product = products[index]
-            product.category = undefined
-            await product.save();
-        }
-        await category.deleteOne();
-        await res.status(200).send({
-            message: 'Category deleted successfully',
-            success: true
-        });
-    } catch (error) {
-        console.log(error),
-            res.status(500).send({
-                message: "Error while deleting category",
-                success: false,
-                error,
-            });
+  try {
+    const category = await categoryModel.findById(req.params.id);
+    if (!category) {
+      return res.status(500).send({
+        message: "Category not found",
+        success: false,
+      });
     }
+    const products = await productModel.find({ category: category._id });
+    for (let index = 0; index < products.length; index++) {
+      const product = products[index];
+      product.category = undefined;
+      await product.save();
+    }
+    await category.deleteOne();
+    await res.status(200).send({
+      message: "Category deleted successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error),
+      res.status(500).send({
+        message: "Error while deleting category",
+        success: false,
+        error,
+      });
+  }
 };
 //update category
 export const updateCategoryController = async (req, res) => {
-    try {
-        const category = await categoryModel.findById(req.params.id);
-        if (!category) {
-            return res.status(500).send({
-                message: "Category is not found",
-                success: false,
-            });
-        }
-        const { updatedCategory } = req.body
-        const products = productModel.findById({ category: category._id });
-        for (let index = 0; index < products.length; index++) {
-            const product = products[index];
-            product.category = updatedCategory;
-            await product.save();
-        }
-        if (updatedCategory) category.category_name = updatedCategory
-        await category.save();
-        res.status(200).send({
-            message: 'Category updated successfully',
-            success: true
-        });
-    } catch (error) {
-        console.log(error);
-        if (error.name === "CastError") {
-            return res.status(500).send({
-                message: "Invalis Id",
-                success: false,
-            })
-        }
-        res.status(500).send({
-            message: "Error while updating category",
-            success: false,
-            error,
-
-        });
+  try {
+    const category = await categoryModel.findById(req.params.id);
+    if (!category) {
+      return res.status(500).send({
+        message: "Category is not found",
+        success: false,
+      });
     }
+    const { updatedCategory } = req.body;
+    const products = productModel.findById({ category: category._id });
+    for (let index = 0; index < products.length; index++) {
+      const product = products[index];
+      product.category = updatedCategory;
+      await product.save();
+    }
+    if (updatedCategory) category.category_name = updatedCategory;
+    await category.save();
+    res.status(200).send({
+      message: "Category updated successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    if (error.name === "CastError") {
+      return res.status(500).send({
+        message: "Invalis Id",
+        success: false,
+      });
+    }
+    res.status(500).send({
+      message: "Error while updating category",
+      success: false,
+      error,
+    });
+  }
 };
-
-

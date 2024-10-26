@@ -3,8 +3,8 @@ import Layout from "../../components/Layout/Layout";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
-
 import { useAuth } from "../../context/auth";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,16 +17,21 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API}/api/login`, {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API}/api/login`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true } // Include this line to send cookies
+      );
+
       if (res && res.data.success) {
         toast.success(res.data && res.data.message);
         setAuth({
           ...auth,
           user: res.data.user,
-          token: res.data.token,
+          token: res.data.token, // This token will now be stored in cookies
         });
         localStorage.setItem("auth", JSON.stringify(res.data));
         navigate(location.state || "/");
@@ -38,6 +43,7 @@ const Login = () => {
       toast.error("Something went wrong");
     }
   };
+
   return (
     <Layout title="Register - Ecommer App">
       <div className="form-container ">

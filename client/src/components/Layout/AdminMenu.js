@@ -7,19 +7,22 @@ const AdminMenu = () => {
     <>
       <div className="list-group">
         <NavLink
-          to="/create-category"
+          to="/admin/create-category"
           className="list-group-item list-group-item-action"
         >
           Create Category
         </NavLink>
 
         <NavLink
-          to="/create-product"
+          to="/admin/create-product"
           className="list-group-item list-group-item-action"
         >
           Create Product
         </NavLink>
-        <NavLink to="/users" className="list-group-item list-group-item-action">
+        <NavLink
+          to="/admin/users"
+          className="list-group-item list-group-item-action"
+        >
           Users
         </NavLink>
       </div>

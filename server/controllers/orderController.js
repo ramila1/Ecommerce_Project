@@ -1,8 +1,6 @@
 import orderModel from "../models/orderModel.js";
 import productModel from "../models/productModel.js";
-import userModel from "../models/userModel.js";
-import { getDataUri } from "../utils/features.js";
-import cloudinary from "cloudinary";
+
 import { stripe } from "../server.js";
 export const getAllOrderController = async (req, res) => {
   try {
@@ -110,9 +108,8 @@ export const createOrderController = async (req, res) => {
 //payment
 export const paymentController = async (req, res) => {
   try {
-    //get amount
     const { totalAmount } = req.body;
-    //validation
+
     if (!totalAmount) {
       return res.status(404).send({
         message: "Total Amount is require",
@@ -173,8 +170,10 @@ export const orderStatusController = async (req, res) => {
       });
   }
 };
+
+//get user order
 export const getUserOrderController = async (req, res) => {
-  console.log("Authenticated User:", req.user); // Log user information
+  console.log("Authenticated User:", req.user);
   try {
     const orders = await orderModel.find({ user: req.user._id });
 

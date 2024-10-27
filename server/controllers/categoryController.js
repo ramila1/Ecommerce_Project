@@ -1,8 +1,6 @@
 import slugify from "slugify";
 import categoryModel from "../models/categoryModel.js";
 import productModel from "../models/productModel.js";
-import { getDataUri } from "../utils/features.js";
-import cloudinary from "cloudinary";
 
 export const getAllCategoryController = async (req, res) => {
   try {
@@ -94,7 +92,6 @@ export const createCategoryController = async (req, res) => {
 // Delete category controller
 export const deleteCategoryController = async (req, res) => {
   try {
-    // Find the category by ID
     const category = await categoryModel.findById(req.params.id);
     if (!category) {
       return res.status(404).send({
@@ -103,25 +100,22 @@ export const deleteCategoryController = async (req, res) => {
       });
     }
 
-    // Delete all products linked to this category
     const deletedProducts = await productModel.deleteMany({
       category: category._id,
     });
 
-    // Check if any products were deleted
     if (deletedProducts.deletedCount > 0) {
       console.log(`${deletedProducts.deletedCount} products deleted.`);
     } else {
       console.log("No products were found for this category.");
     }
 
-    // Delete the category
     await category.deleteOne();
 
     res.status(200).send({
       message: "Category and associated products deleted successfully",
       success: true,
-      deletedCount: deletedProducts.deletedCount, // Include the count of deleted products in the response
+      deletedCount: deletedProducts.deletedCount,
     });
   } catch (error) {
     console.error("Error deleting category:", error);
@@ -168,6 +162,30 @@ export const updateCategoryController = async (req, res) => {
       message: "Error while updating category",
       success: false,
       error,
+    });
+  }
+};
+
+//get all products on the basis of category
+export const getCategoryProductsController = async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+
+    const category = await categoryModel.findById(categoryId);
+    if (!category) {
+      return res
+        .status(500)
+        .send({ success: false, message: "Category not found" });
+    }
+
+    const products = await productModel.find({ category: categoryId });
+
+    res.status(200).send({ success: true, category: category.name, products });
+  } catch (error) {
+    console.error("Error fetching category products:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error fetching products for the category",
     });
   }
 };

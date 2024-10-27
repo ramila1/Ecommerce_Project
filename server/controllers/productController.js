@@ -3,6 +3,7 @@ import productModel from "../models/productModel.js";
 import { getDataUri } from "../utils/features.js";
 import cloudinary from "cloudinary";
 
+//get all product
 export const getAllProductController = async (req, res) => {
   try {
     const products = await productModel.find({});
@@ -22,6 +23,7 @@ export const getAllProductController = async (req, res) => {
   }
 };
 
+//fetch single product
 export const getSingleProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -56,6 +58,7 @@ export const getSingleProduct = async (req, res) => {
     });
   }
 };
+//create product
 export const createProduct = async (req, res) => {
   try {
     const { name, category, description, price, stock } = req.body;
@@ -105,6 +108,7 @@ export const createProduct = async (req, res) => {
   }
 };
 
+//update product
 export const updateProduct = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);
@@ -150,6 +154,7 @@ export const updateProduct = async (req, res) => {
   }
 };
 
+//deleet Image
 export const deleteImage = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);
@@ -195,6 +200,7 @@ export const deleteImage = async (req, res) => {
   }
 };
 
+//delete product
 export const deleteProduct = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);

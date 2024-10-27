@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import { getDataUri } from "../utils/features.js";
 import cloudinary from "cloudinary";
 
+//create user
 export const userController = async (req, res) => {
   try {
     const {
@@ -72,6 +73,7 @@ export const userController = async (req, res) => {
 
 export default userController;
 
+//login user
 export const userLoginController = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -122,6 +124,7 @@ export const userLoginController = async (req, res) => {
   }
 };
 
+//get user own profile
 export const getUserProfile = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
@@ -164,6 +167,7 @@ export const logout = async (req, res) => {
   }
 };
 
+//update user
 export const updateUser = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
@@ -195,6 +199,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
+//update password
 export const updatePassword = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
@@ -232,6 +237,7 @@ export const updatePassword = async (req, res) => {
   }
 };
 
+//update pic
 export const profilePic = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
@@ -262,6 +268,7 @@ export const profilePic = async (req, res) => {
   }
 };
 
+//reset password
 export const passwordResetController = async (req, res) => {
   try {
     const { email, newPassword, answer } = req.body;
@@ -297,6 +304,7 @@ export const passwordResetController = async (req, res) => {
   }
 };
 
+//get all user
 export const getAllUserController = async (req, res) => {
   try {
     const users = await userModel.find({});
@@ -316,6 +324,7 @@ export const getAllUserController = async (req, res) => {
   }
 };
 
+//set single user
 export const getSingleUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -351,6 +360,7 @@ export const getSingleUser = async (req, res) => {
   }
 };
 
+//update other user
 export const updateOtherUser = async (req, res) => {
   try {
     const user = await userModel.findById(req.params.id);

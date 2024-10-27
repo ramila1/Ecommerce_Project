@@ -3,6 +3,7 @@ import Layout from "../../components/Layout/Layout";
 import UserMenu from "../../components/Layout/UserMenu";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -37,20 +38,21 @@ const Category = () => {
             <h1 className="text-center">All Categories</h1>
             <div className="d-flex flex-wrap">
               {categories?.map((category) => (
-                <div
+                <Link
                   key={category._id}
-                  className="card m-2"
-                  style={{ width: "18rem" }}
+                  to={`/user/all-category/category/get-category-products/${category._id}`}
                 >
-                  <img
-                    src={category.image?.url || "/images/default_image.jpg"} // Default image
-                    className="card-img-top"
-                    alt={category.category_name}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{category.category_name}</h5>
+                  <div className="card m-2" style={{ width: "18rem" }}>
+                    <img
+                      src={category.image?.url || "/images/default_image.jpg"}
+                      className="card-img-top"
+                      alt={category.category_name}
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">{category.category_name}</h5>
+                    </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 
 const Header = ({ id }) => {
   const [auth, setAuth] = useAuth();
+
   const handleLogout = () => {
     setAuth({
       ...auth,
@@ -12,8 +13,9 @@ const Header = ({ id }) => {
       token: "",
     });
     localStorage.removeItem("auth");
-    toast.success("Logout Sucess");
+    toast.success("Logout Success");
   };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -76,11 +78,14 @@ const Header = ({ id }) => {
                   </li>
                 </>
               )}
-              <li className="nav-item">
-                <NavLink to={`/user/orders`} className="nav-link">
-                  Order
-                </NavLink>
-              </li>
+
+              {auth.user && auth.user.role === "user" && (
+                <li className="nav-item">
+                  <NavLink to={`/user/orders`} className="nav-link">
+                    Order
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </div>
         </div>

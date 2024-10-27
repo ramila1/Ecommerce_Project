@@ -50,3 +50,99 @@
   justify-content: center;
 
 }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 15px; 
+}
+
+.mb-3 {
+  margin-bottom: 1rem; 
+}
+
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;    
+  height: 100vh;         
+}
+
+.login-form {
+  width: 300px;         
+  padding: 20px;         
+  border: 1px solid #ccc; 
+  border-radius: 8px;     
+  background-color: #fff; 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+}
+
+.link-primary {
+  color: #007bff;
+  text-decoration: none; 
+}
+
+.link-primary:hover {
+  text-decoration: underline;
+}
+.text-center {
+  text-align: center;
+}
+
+.custom-card {
+  width: 15rem;
+  height: 20rem;
+}
+
+.custom-card img {
+  height: 11rem; 
+  object-fit: cover;
+}
+
+.card-body {
+  text-align: center; 
+}
+
+.smaller-image {
+  max-width: 100%; 
+  height: auto; 
+  width: 50%; 
+}
+
+.payment-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; 
+  background-color: #f8f9fa; 
+}
+
+.payment-form {
+  padding: 2rem; 
+  border: 1px solid #ced4da; 
+  border-radius: 0.5rem; 
+  background-color: #fff; 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+  width: 400px; 
+}
+
+
+.card {
+  width: 18rem; 
+  height: 330px; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+}
+
+.card-img-top {
+  height: 200px; 
+  object-fit: cover;
+}
+
+.card-body {
+  flex-grow: 1; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+}

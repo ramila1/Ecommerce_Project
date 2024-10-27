@@ -36,9 +36,19 @@ const AdminDashboard = () => {
           </div>
           <div className="col-md-9">
             <div className="card w-75 p-3">
-              <h1>{userProfile?.name || "Loading..."}</h1>
-              <h1>{userProfile?.email || "Loading..."}</h1>
-              <h1>{userProfile?.phone || "Loading..."}</h1>
+              <div className="d-flex flex-column align-items-center">
+                {userProfile?.profilePicture?.url && (
+                  <img
+                    src={userProfile.profilePicture.url}
+                    alt="Profile"
+                    className="img-fluid rounded-circle mb-3"
+                    style={{ width: "100px", height: "100px" }}
+                  />
+                )}
+                <h1>{userProfile?.name || "Loading..."}</h1>
+                <h1>{userProfile?.email || "Loading..."}</h1>
+                <h1>{userProfile?.phone || "Loading..."}</h1>
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import Layout from "../../components/Layout/Layout";
+import AdminMenu from "../../components/Layout/AdminMenu";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 const SingleUser = () => {
   const { id } = useParams();
@@ -24,9 +26,7 @@ const SingleUser = () => {
       try {
         const response = await axios.get(
           `http://localhost:5000/api/get-single-user/${id}`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
         console.log("Fetched user data:", response.data);
         if (response.data.user) {
@@ -85,78 +85,131 @@ const SingleUser = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Update User</h1>
-      <div className="mb-4">
-        <img
-          src={user.profilePicture?.url || "/images/default_image.jpg"}
-          alt="Profile"
-          className="w-32 h-32 rounded-full mb-2"
-        />
-      </div>
+    <Layout>
+      <div className="container-fluid m-3 p-3">
+        <div className="row">
+          <div className="col-md-3">
+            <AdminMenu />
+          </div>
+          <div className="col-md-9 text-center">
+            <h1 className="text-center">Update User</h1>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <img
+                  src={user.profilePicture?.url || "/images/default_image.jpg"}
+                  alt="Profile"
+                  style={{ width: "150px", height: "150px" }}
+                  className="rounded-full mb-2"
+                />
+              </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          value={user.name}
-          onChange={handleChange}
-          placeholder="Name"
-          className="input"
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          value={user.email}
-          onChange={handleChange}
-          placeholder="Email"
-          className="input"
-          required
-        />
-        <input
-          type="text"
-          name="address"
-          value={user.address}
-          onChange={handleChange}
-          placeholder="Address"
-          className="input"
-        />
-        <input
-          type="text"
-          name="city"
-          value={user.city}
-          onChange={handleChange}
-          placeholder="City"
-          className="input"
-        />
-        <input
-          type="text"
-          name="country"
-          value={user.country}
-          onChange={handleChange}
-          placeholder="Country"
-          className="input"
-        />
-        <input
-          type="file"
-          name="file"
-          onChange={handleChange}
-          className="input"
-        />
-        <input
-          type="tel"
-          name="phone"
-          value={user.phone}
-          onChange={handleChange}
-          placeholder="Phone"
-          className="input"
-        />
-        <button type="submit" className="btn">
-          Update User
-        </button>
-      </form>
-    </div>
+              <div className="mb-3 row">
+                <label htmlFor="name" className="col-md-4 col-form-label">
+                  Name:
+                </label>
+                <div className="col-md-5">
+                  <input
+                    type="text"
+                    name="name"
+                    value={user.name}
+                    onChange={handleChange}
+                    className="form-control"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label htmlFor="email" className="col-md-4 col-form-label">
+                  Email:
+                </label>
+                <div className="col-md-5">
+                  <input
+                    type="email"
+                    name="email"
+                    value={user.email}
+                    onChange={handleChange}
+                    className="form-control"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label htmlFor="address" className="col-md-4 col-form-label">
+                  Address:
+                </label>
+                <div className="col-md-5">
+                  <input
+                    type="text"
+                    name="address"
+                    value={user.address}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label htmlFor="city" className="col-md-4 col-form-label">
+                  City:
+                </label>
+                <div className="col-md-5">
+                  <input
+                    type="text"
+                    name="city"
+                    value={user.city}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label htmlFor="country" className="col-md-4 col-form-label">
+                  Country:
+                </label>
+                <div className="col-md-5">
+                  <input
+                    type="text"
+                    name="country"
+                    value={user.country}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label htmlFor="file" className="col-md-4 col-form-label">
+                  Profile Picture:
+                </label>
+                <div className="col-md-5">
+                  <input
+                    type="file"
+                    name="file"
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <div className="mb-3 row">
+                <label htmlFor="phone" className="col-md-4 col-form-label">
+                  Phone:
+                </label>
+                <div className="col-md-5">
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={user.phone}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+              <button type="submit" className="btn btn-primary">
+                Update User
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </Layout>
   );
 };
 

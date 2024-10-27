@@ -6,22 +6,22 @@ import toast from "react-hot-toast";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(process.env.STRIPE_SECRET_KEY); // Load your Stripe public key
+const stripePromise = loadStripe(process.env.STRIPE_SECRET_KEY);
 
 const Payment = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const [loading, setLoading] = useState(true);
-  const [product, setProduct] = useState(null); // Store the fetched product
+  const [product, setProduct] = useState(null);
   const [orderDetails, setOrderDetails] = useState({
-    payment_method: "ONLINE", // Set payment method to ONLINE
+    payment_method: "ONLINE",
     total_amount: 0,
     address: "",
     city: "",
     country: "",
   });
-  const [clientSecret, setClientSecret] = useState(""); // For Stripe client secret
+  const [clientSecret, setClientSecret] = useState("");
   const stripe = useStripe();
   const elements = useElements();
 
@@ -65,9 +65,9 @@ const Payment = () => {
       );
 
       if (data.success) {
-        navigate(`/`);
+        navigate("/");
         setClientSecret(data.client_secret);
-        handleSubmit(); // Call handleSubmit after setting the client secret
+        handleSubmit();
       } else {
         toast.error(
           "Failed to create payment intent. Please check your request."
@@ -115,7 +115,7 @@ const Payment = () => {
               product: product._id,
               name: product.name,
               price: product.price,
-              quantity: 1, // Update to the actual quantity if needed
+              quantity: 1,
               image: product.images?.[0]?.url,
             },
           ],
@@ -131,26 +131,24 @@ const Payment = () => {
           order_status: "processing",
         };
 
-        // Navigate to the home page after successful payment
-        navigate("/"); // Redirect to home page
+        navigate("/");
       }
     }
   };
 
   return (
     <Layout>
-      <div className="row">
-        <form onSubmit={handlePayment} className="p-3">
+      <div className="payment-container">
+        <form onSubmit={handlePayment} className="payment-form">
           <div className="mb-3">
             <label className="form-label">Payment Method</label>
             <input
               type="text"
               className="form-control"
-              value={orderDetails.payment_method} // Display payment method
+              value={orderDetails.payment_method}
               readOnly
             />
           </div>
-
           <div className="mb-3">
             <label className="form-label">Total Amount</label>
             <input
@@ -161,56 +159,7 @@ const Payment = () => {
               readOnly
             />
           </div>
-
-          {/* Address fields */}
-          <div className="mb-3">
-            <label className="form-label">Address</label>
-            <input
-              type="text"
-              className="form-control"
-              value={orderDetails.address}
-              onChange={(e) =>
-                setOrderDetails((prev) => ({
-                  ...prev,
-                  address: e.target.value,
-                }))
-              }
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">City</label>
-            <input
-              type="text"
-              className="form-control"
-              value={orderDetails.city}
-              onChange={(e) =>
-                setOrderDetails((prev) => ({
-                  ...prev,
-                  city: e.target.value,
-                }))
-              }
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Country</label>
-            <input
-              type="text"
-              className="form-control"
-              value={orderDetails.country}
-              onChange={(e) =>
-                setOrderDetails((prev) => ({
-                  ...prev,
-                  country: e.target.value,
-                }))
-              }
-              required
-            />
-          </div>
-
           <CardElement className="mb-3" />
-
           <button type="submit" className="btn btn-primary">
             Place Order
           </button>
@@ -220,4 +169,4 @@ const Payment = () => {
   );
 };
 
-export default Payment; // Ensure you export Payment, not Product
+export default Payment;

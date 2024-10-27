@@ -28,28 +28,31 @@ const Users = () => {
 
   return (
     <Layout>
-      <div className="row">
-        <div className="col-md-3">
-          <AdminMenu />
-        </div>
-        <div className="col-md-9">
-          <h1 className="text-center">All Users Lists</h1>
-          <div className="d-flex flex-wrap">
-            {users?.map((p) => (
-              <Link key={p._id} to={`/admin/single-user/${p._id}`}>
-                <div className="card m-2" style={{ width: "18rem" }}>
-                  <img
-                    src={p.profilePicture?.url || "/images/default_image.jpg"}
-                    className="card-img-top"
-                    alt={p.name}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{p.name}</h5>
-                    <p className="card-text">{p.email}</p>
+      <div className="container-fluid m-3 p-3">
+        <div className="row">
+          <div className="col-md-3">
+            <AdminMenu />
+          </div>
+          <div className="col-md-9">
+            <h1 className="text-center">All Users Lists</h1>
+            <div className="d-flex flex-wrap">
+              {users?.map((user) => (
+                <Link key={user._id} to={`/admin/single-user/${user._id}`}>
+                  <div className="card m-2" style={{ width: "18rem" }}>
+                    <img
+                      src={
+                        user.profilePicture?.url || "/images/default_image.jpg"
+                      }
+                      className="card-img-top"
+                      alt={user.name}
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">{user.name}</h5>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

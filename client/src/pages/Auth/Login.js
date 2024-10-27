@@ -45,9 +45,9 @@ const Login = () => {
   };
 
   return (
-    <Layout title="Register - Ecommer App">
-      <div className="form-container ">
-        <form onSubmit={handleSubmit}>
+    <Layout title="Login - Ecommer App">
+      <div className="form-container">
+        <form onSubmit={handleSubmit} className="login-form">
           <h4 className="title">LOGIN FORM</h4>
 
           <div className="mb-3">
@@ -57,7 +57,7 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="form-control"
               id="exampleInputEmail1"
-              placeholder="Enter Your Email "
+              placeholder="Enter Your Email"
               required
             />
           </div>
@@ -72,21 +72,34 @@ const Login = () => {
               required
             />
           </div>
-          <div className="mb-3">
-            <button
-              type="button"
-              className="btn btn-primary"
+          <div className="d-flex justify-content-between mb-3">
+            <div></div>
+            <a
+              href="#"
+              className="link-primary"
               onClick={() => {
                 navigate("/forget-password");
               }}
             >
-              Forgot Password
-            </button>
+              Forgot Password?
+            </a>
           </div>
 
-          <button type="submit" className="btn btn-primary">
-            LOGIN
-          </button>
+          <div className="text-center">
+            <button type="submit" className="btn btn-primary">
+              LOGIN
+            </button>
+            <div></div>
+            <a
+              href="#"
+              className="link-primary"
+              onClick={() => {
+                navigate("/register");
+              }}
+            >
+              Don't have account?
+            </a>
+          </div>
         </form>
       </div>
     </Layout>

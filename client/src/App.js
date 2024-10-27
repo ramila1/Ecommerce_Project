@@ -17,11 +17,12 @@ import Products from "./pages/Admin/Products";
 import UpdateProduct from "./pages/Admin/UpdateProduct";
 import SingleUser from "./pages/Admin/SingleUser";
 import AllProducts from "./pages/user/AllProducts";
-
+import CategoryProduct from "./pages/user/CategoryProduct";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Payment from "./pages/user/Payment";
 import SingleProduct from "./pages/user/SingleProduct";
+import AllOrder from "./pages/Admin/AllOrder";
 
 // Load the Stripe public key (ensure you use the public key)
 const stripePromise = loadStripe(process.env.STRIPE_API_KEY);
@@ -46,8 +47,13 @@ function App() {
         <Route path="/admin/create-product" element={<CreateProduct />} />
         <Route path="/admin/products" element={<Products />} />
         <Route path="/admin/products/:id" element={<UpdateProduct />} />
-        <Route path="/admin/single-user" element={<SingleUser />} />\
+        <Route path="/admin/single-user/:id" element={<SingleUser />} />
+        <Route path="/admin/all-order" element={<AllOrder />}></Route>
         <Route path="/user/all-category" element={<Category />}></Route>
+        <Route
+          path="/user/all-category/category/get-category-products/:id"
+          element={<CategoryProduct />}
+        ></Route>
         <Route
           path="/user/single-product/:id"
           element={<SingleProduct />}

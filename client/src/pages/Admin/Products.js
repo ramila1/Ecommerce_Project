@@ -27,28 +27,31 @@ const Products = () => {
 
   return (
     <Layout>
-      <div className="row">
-        <div className="col-md-3">
-          <AdminMenu />
-        </div>
-        <div className="col-md-9">
-          <h1 className="text-center">All Products Lists</h1>
-          <div className="d-flex flex-wrap">
-            {products?.map((p) => (
-              <Link key={p._id} to={`/admin/products/${p._id}`}>
-                <div className="card m-2" style={{ width: "18rem" }}>
-                  <img
-                    src={p.images?.[0]?.url || "/images/default_image.jpg"}
-                    className="card-img-top"
-                    alt={p.name}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{p.name}</h5>
-                    <p className="card-text">{p.description}</p>
+      <div className="container-fluid m-3 p-3">
+        <div className="row">
+          <div className="col-md-3">
+            <AdminMenu />
+          </div>
+          <div className="col-md-9">
+            <h1 className="text-center">All Products Lists</h1>
+            <div className="d-flex flex-wrap">
+              {products?.map((p) => (
+                <Link key={p._id} to={`/admin/products/${p._id}`}>
+                  <div className="card m-2" style={{ width: "18rem" }}>
+                    <img
+                      src={p.images?.[0]?.url || "/images/default_image.jpg"}
+                      className="card-img-top"
+                      alt={p.name}
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">{p.name}</h5>
+                      <p className="card-text">{p.description}</p>
+                      <h5 className="card-title">${p.price}</h5>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

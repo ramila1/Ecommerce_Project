@@ -91,37 +91,48 @@ export const createCategoryController = async (req, res) => {
       });
   }
 };
-
-//delete category
+// Delete category controller
 export const deleteCategoryController = async (req, res) => {
   try {
+    // Find the category by ID
     const category = await categoryModel.findById(req.params.id);
     if (!category) {
-      return res.status(500).send({
+      return res.status(404).send({
         message: "Category not found",
         success: false,
       });
     }
-    const products = await productModel.find({ category: category._id });
-    for (let index = 0; index < products.length; index++) {
-      const product = products[index];
-      product.category = undefined;
-      await product.save();
+
+    // Delete all products linked to this category
+    const deletedProducts = await productModel.deleteMany({
+      category: category._id,
+    });
+
+    // Check if any products were deleted
+    if (deletedProducts.deletedCount > 0) {
+      console.log(`${deletedProducts.deletedCount} products deleted.`);
+    } else {
+      console.log("No products were found for this category.");
     }
+
+    // Delete the category
     await category.deleteOne();
-    await res.status(200).send({
-      message: "Category deleted successfully",
+
+    res.status(200).send({
+      message: "Category and associated products deleted successfully",
       success: true,
+      deletedCount: deletedProducts.deletedCount, // Include the count of deleted products in the response
     });
   } catch (error) {
-    console.log(error),
-      res.status(500).send({
-        message: "Error while deleting category",
-        success: false,
-        error,
-      });
+    console.error("Error deleting category:", error);
+    res.status(500).send({
+      message: "Error while deleting category",
+      success: false,
+      error: error.message || error,
+    });
   }
 };
+
 //update category
 export const updateCategoryController = async (req, res) => {
   try {

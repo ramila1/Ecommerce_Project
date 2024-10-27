@@ -8,17 +8,17 @@ const UserMenu = () => {
         <div className="list-group">
           <h4>Dashboard</h4>
           <NavLink
-            to="/user/profile"
+            to="/user/all-product"
             className="list-group-item list-group-item-action"
           >
-            Profile
+            All Products
           </NavLink>
-
+          <div></div>
           <NavLink
-            to="/user/orders"
+            to="/user/all-category"
             className="list-group-item list-group-item-action"
           >
-            Orders
+            Categories
           </NavLink>
         </div>
       </div>

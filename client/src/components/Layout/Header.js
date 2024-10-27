@@ -3,7 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 import toast from "react-hot-toast";
 
-const Header = () => {
+const Header = ({ id }) => {
   const [auth, setAuth] = useAuth();
   const handleLogout = () => {
     setAuth({
@@ -39,11 +39,7 @@ const Header = () => {
                   Home
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink to="/category" className="nav-link ">
-                  Category
-                </NavLink>
-              </li>
+
               {!auth.user ? (
                 <>
                   <li className="nav-item">
@@ -81,8 +77,8 @@ const Header = () => {
                 </>
               )}
               <li className="nav-item">
-                <NavLink to="/cart" className="nav-link">
-                  Cart (0)
+                <NavLink to={`/user/orders`} className="nav-link">
+                  Order
                 </NavLink>
               </li>
             </ul>

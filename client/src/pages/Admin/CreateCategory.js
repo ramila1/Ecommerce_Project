@@ -82,23 +82,25 @@ const CreateCategory = () => {
     }
   };
 
-  const handleDelete = async (cId, category_name) => {
-    try {
-      const { data } = await axios.delete(
-        `${process.env.REACT_APP_API}/category/delete-category/${cId}`,
-        { withCredentials: true }
-      );
+  const handleDelete = async (id, category_name) => {
+    if (window.confirm("Are you sure you want to delete category?")) {
+      try {
+        const { data } = await axios.delete(
+          `${process.env.REACT_APP_API}/category/delete-category/${id}`,
+          { withCredentials: true }
+        );
 
-      if (data?.success) {
-        toast.success(`${category_name} is deleted`);
+        if (data?.success) {
+          toast.success(`${category_name} is deleted`);
 
-        getAllCategory();
-      } else {
-        toast.error(data.message);
+          getAllCategory();
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Something went wrong during the update");
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong during the update");
     }
   };
   return (

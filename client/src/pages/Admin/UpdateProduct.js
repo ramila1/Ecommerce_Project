@@ -9,44 +9,45 @@ import { Select } from "antd";
 const { Option } = Select;
 
 const UpdateProduct = () => {
-  const navigate = useNavigate();
-  const params = useParams();
+  const { id } = useParams();
   const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [files, setImages] = useState(null);
-  const [id, setId] = useState("");
-  const [currentImage, setCurrentImage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const [product, setProduct] = useState({
+    category: "",
+    name: "",
+    description: "",
+    price: "",
+    stock: "",
+    images: [],
+  });
 
-  // Fetch single product details
-  const getSingleProduct = async () => {
-    try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/product/get-single-product/${params.slug}`,
-        { withCredentials: true }
-      );
-      setName(data.product.name);
-      setId(data.product._id);
-      setDescription(data.product.description);
-      setPrice(data.product.price);
-      setStock(data.product.stock);
-      setCategory(data.product.category);
+  const [file, setFile] = useState(null);
 
-      if (data.product.images && data.product.images.length > 0) {
-        setCurrentImage(data.product.images[0].url);
-      } else {
-        setCurrentImage("");
+  useEffect(() => {
+    const getSingleProduct = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/product/get-single-product/${id}`,
+          { withCredentials: true }
+        );
+        if (response.data.product) {
+          setProduct(response.data.product);
+        } else {
+          toast.error("Product not found");
+        }
+      } catch (error) {
+        console.error("Error fetching product data", error);
+        toast.error("Failed to fetch product data");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching product details:", error);
-      toast.error("Error fetching product details");
-    }
-  };
+    };
 
-  // Fetch all categories
+    getSingleProduct();
+  }, [id]);
+
   const getAllCategory = async () => {
     try {
       const res = await axios.get(
@@ -54,71 +55,77 @@ const UpdateProduct = () => {
         { withCredentials: true }
       );
       if (res.data?.success) {
-        setCategories(res.data.category);
+        setCategories(res.data?.category);
       }
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.log(error);
       toast.error("Something went wrong in getting categories");
     }
   };
 
   useEffect(() => {
     getAllCategory();
-    getSingleProduct();
-    //eslint-disable-nextline
   }, []);
 
-  const handleUpdate = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "file") {
+      setFile(e.target.files[0]);
+    } else {
+      setProduct({ ...product, [name]: value });
+    }
+  };
+
+  const handleUpdateProduct = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+
+    for (const key in product) {
+      formData.append(key, product[key]);
+    }
+
+    if (file) {
+      formData.append("file", file);
+    }
+
     try {
-      const productData = new FormData();
-      productData.append("category", category);
-      productData.append("name", name);
-      productData.append("description", description);
-      productData.append("price", price);
-      productData.append("stock", stock);
-
-      // Log the selected files
-      console.log("Selected files:", files);
-
-      if (files) {
-        productData.append("files", files); // Send image file
-      }
-
-      console.log("Product data being sent:", Object.fromEntries(productData));
-
-      const { data } = await axios.put(
-        `${process.env.REACT_APP_API}/product/update/${params.id}`,
-        productData,
+      const response = await axios.put(
+        `http://localhost:5000/product/update-product/${id}`,
+        formData,
         { withCredentials: true }
       );
-
-      console.log("Response from update:", data);
-
-      if (data?.success) {
-        toast.success(data.message);
-        navigate("/"); // Navigate after success
+      if (response?.data.success) {
+        toast.success("Product updated successfully!");
       } else {
-        toast.error("Product is not updated");
+        toast.error("Failed to update product");
       }
     } catch (error) {
-      console.error("Error updating product:", error);
-      toast.error("Something went wrong");
+      console.error("Error updating product", error);
+      toast.error("Error updating product");
     }
   };
+
   const handleDelete = async () => {
-    try {
-      const { data } = await axios.delete(
-        `${process.env.REACT_APP_API}/product/delete-product/${id}`,
-        { withCredentials: true }
-      );
-      toast.success("Product deleted successfully");
-      navigate("/admin/products");
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:5000/product/delete-product/${id}`,
+          { withCredentials: true }
+        );
+        if (response?.data.success) {
+          toast.success("Product deleted successfully!");
+          navigate("/admin/products");
+          toast.error("Failed to delete product");
+        }
+      } catch (error) {
+        console.error("Error deleting product", error);
+        toast.error("Error deleting product");
+      }
     }
   };
+
+  if (loading) return <div>Loading...</div>;
+
   return (
     <Layout>
       <div className="container-fluid m-3 p-3">
@@ -128,98 +135,129 @@ const UpdateProduct = () => {
           </div>
           <div className="col-md-9">
             <h1 className="text-center">Update Product</h1>
-            <div className="m-1 w-75">
-              <Select
-                placeholder="Select a category"
-                size="large"
-                showSearch
-                className="form-select mb-3"
-                onChange={(value) => setCategory(value)}
-                value={category}
-              >
-                {categories.map((c) => (
-                  <Option key={c._id} value={c._id}>
-                    {c.category_name}
-                  </Option>
-                ))}
-              </Select>
-            </div>
+            <form onSubmit={handleUpdateProduct}>
+              <div className="m-1 w-75">
+                <Select
+                  placeholder="Select a category"
+                  size="large"
+                  showSearch
+                  value={product.category}
+                  onChange={(value) =>
+                    setProduct({ ...product, category: value })
+                  }
+                  className="form-select mb-3"
+                >
+                  {categories.map((c) => (
+                    <Option key={c._id} value={c._id}>
+                      {c.category_name}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
 
-            <div className="mb-3">
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-control"
-                placeholder="Enter Product Name"
-                required
-              />
-            </div>
-
-            <div className="mb-3">
-              <input
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="form-control"
-                placeholder="Enter Description of Product"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <input
-                type="number"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="form-control"
-                placeholder="Enter Product Price"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <input
-                type="text"
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
-                className="form-control"
-                placeholder="Enter Product Stock"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label className="btn btn-outline-secondary col-md-12">
-                {files ? files.name : "Upload Photo"}
+              <div className="mb-3">
                 <input
-                  type="file"
-                  name="photo"
-                  accept="image/*"
-                  onChange={(e) => setImages(e.target.files[0])}
-                  hidden
+                  type="text"
+                  name="name"
+                  value={product.name}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="Enter Product Name"
+                  required
                 />
-              </label>
-            </div>
-            <div className="card m-2" style={{ width: "18rem" }}>
-              <img
-                src={
-                  files
-                    ? URL.createObjectURL(files)
-                    : currentImage || "/images/default_image.jpg"
-                }
-                className="card-img-top"
-                alt="product pic"
-                height="200px"
-              />
-            </div>
-            <div className="mb-3">
-              <button className="btn btn-primary" onClick={handleUpdate}>
-                UPDATE PRODUCT
-              </button>
-            </div>
-            <div className="mb-3">
-              <button className="btn btn-danger" onClick={handleDelete}>
-                DELETE PRODUCT
-              </button>
-            </div>
+              </div>
+
+              <div className="mb-3">
+                <input
+                  type="text"
+                  name="description"
+                  className="form-control"
+                  value={product.description}
+                  onChange={handleChange}
+                  placeholder="Enter Description of Product"
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="number"
+                  name="price"
+                  value={product.price}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="Enter Product Price"
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="text"
+                  name="stock"
+                  className="form-control"
+                  value={product.stock}
+                  onChange={handleChange}
+                  placeholder="Enter Product Stock"
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="btn btn-outline-secondary col-md-12">
+                  {file ? "File selected" : "Upload Photo"}
+                  <input
+                    type="file"
+                    name="file"
+                    accept="image/*"
+                    onChange={handleChange}
+                    hidden
+                  />
+                </label>
+              </div>
+
+              {}
+              <div className="row">
+                {product.images.map((img) => (
+                  <div key={img.public_id} className="col-md-3 mb-3">
+                    <div className="card">
+                      <img
+                        src={img.url}
+                        className="card-img-top"
+                        alt="product pic"
+                        height="200px"
+                      />
+                    </div>
+                  </div>
+                ))}
+                {}
+                {file && (
+                  <div className="col-md-3 mb-3">
+                    <div className="card">
+                      <img
+                        src={URL.createObjectURL(file)}
+                        className="card-img-top"
+                        alt="product pic"
+                        height="200px"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-3">
+                <button type="submit" className="btn btn-primary">
+                  UPDATE PRODUCT
+                </button>
+              </div>
+
+              <div className="mb-3">
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={handleDelete}
+                >
+                  DELETE PRODUCT
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

@@ -35,7 +35,7 @@ const Products = () => {
           <h1 className="text-center">All Products Lists</h1>
           <div className="d-flex flex-wrap">
             {products?.map((p) => (
-              <Link key={p._id} to={`/admin/products/${p.slug}`}>
+              <Link key={p._id} to={`/admin/products/${p._id}`}>
                 <div className="card m-2" style={{ width: "18rem" }}>
                   <img
                     src={p.images?.[0]?.url || "/images/default_image.jpg"}

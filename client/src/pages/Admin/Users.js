@@ -14,7 +14,7 @@ const Users = () => {
         `${process.env.REACT_APP_API}/api/get-all-users`,
         { withCredentials: true }
       );
-      console.log("Fetched users:", res.data.users); // Log the users to check for _id
+      console.log("Fetched users:", res.data.users);
       setUsers(res.data.users);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -37,8 +37,6 @@ const Users = () => {
           <div className="d-flex flex-wrap">
             {users?.map((p) => (
               <Link key={p._id} to={`/admin/single-user/${p._id}`}>
-                {" "}
-                {/* Changed p.id to p._id */}
                 <div className="card m-2" style={{ width: "18rem" }}>
                   <img
                     src={p.profilePicture?.url || "/images/default_image.jpg"}

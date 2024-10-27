@@ -24,7 +24,7 @@ const CreateCategory = () => {
       if (data?.success) {
         toast.success(`${category_name} is created`);
         getAllCategory();
-        setName(""); // Clear the input after creating a category
+        setName("");
       } else {
         toast.error(data.message);
       }

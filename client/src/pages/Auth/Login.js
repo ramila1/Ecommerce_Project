@@ -23,7 +23,7 @@ const Login = () => {
           email,
           password,
         },
-        { withCredentials: true } // Include this line to send cookies
+        { withCredentials: true }
       );
 
       if (res && res.data.success) {
@@ -31,7 +31,7 @@ const Login = () => {
         setAuth({
           ...auth,
           user: res.data.user,
-          token: res.data.token, // This token will now be stored in cookies
+          token: res.data.token,
         });
         localStorage.setItem("auth", JSON.stringify(res.data));
         navigate(location.state || "/");

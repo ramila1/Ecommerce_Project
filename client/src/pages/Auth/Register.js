@@ -10,26 +10,45 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+
+  const [country, setCountry] = useState("");
+
   const [answer, setAnswer] = useState("");
+  const [profilePicture, setProfilePicture] = useState(null);
   const navigate = useNavigate();
 
-  // form function
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("phone", phone);
+    formData.append("address", address);
+    formData.append("city", city);
+
+    formData.append("country", country);
+
+    formData.append("answer", answer);
+    if (profilePicture) {
+      formData.append("file", profilePicture);
+    }
+
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API}/api/register`,
+        formData,
         {
-          name,
-          email,
-          password,
-          phone,
-          address,
-          answer,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
+
       if (res && res.data.success) {
-        toast.success(res.data && res.data.message);
+        toast.success(res.data.message);
         navigate("/login");
       } else {
         toast.error(res.data.message);
@@ -42,7 +61,7 @@ const Register = () => {
 
   return (
     <Layout title="Register - Ecommer App">
-      <div className="form-container ">
+      <div className="form-container">
         <form onSubmit={handleSubmit}>
           <h4 className="title">REGISTER FORM</h4>
           <div className="mb-3">
@@ -51,7 +70,6 @@ const Register = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="form-control"
-              id="exampleInputEmail1"
               placeholder="Enter Your Name"
               required
               autoFocus
@@ -63,8 +81,7 @@ const Register = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="form-control"
-              id="exampleInputEmail1"
-              placeholder="Enter Your Email "
+              placeholder="Enter Your Email"
               required
             />
           </div>
@@ -74,7 +91,6 @@ const Register = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="form-control"
-              id="exampleInputPassword1"
               placeholder="Enter Your Password"
               required
             />
@@ -85,7 +101,6 @@ const Register = () => {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="form-control"
-              id="exampleInputEmail1"
               placeholder="Enter Your Phone"
               required
             />
@@ -96,8 +111,27 @@ const Register = () => {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               className="form-control"
-              id="exampleInputEmail1"
               placeholder="Enter Your Address"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="form-control"
+              placeholder="City"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="text"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="form-control"
+              placeholder="Country"
               required
             />
           </div>
@@ -107,8 +141,16 @@ const Register = () => {
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               className="form-control"
-              id="exampleInputEmail1"
-              placeholder="What is Your Favorite sports"
+              placeholder="What is Your Favorite Food?"
+              required
+            />
+          </div>
+
+          <div className="mb-3">
+            <input
+              type="file"
+              onChange={(e) => setProfilePicture(e.target.files[0])}
+              className="form-control"
               required
             />
           </div>

@@ -1,155 +1,162 @@
-import React, { useState, useEffect } from "react";
-import Layout from "../../components/Layout/Layout";
-import AdminMenu from "../../components/Layout/AdminMenu";
-import { useNavigate, useParams } from "react-router-dom";
-import toast from "react-hot-toast";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const SingleUser = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const params = useParams();
-  const [user, setUser] = useState({});
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-
-  // Fetch single user details
-  const getSingleUser = async () => {
-    try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/get-single-user/${params.id}`,
-        { withCredentials: true }
-      );
-
-      // Set user data in state
-      setUser(data.user);
-      // Initialize input fields with fetched user data
-      setName(data.user.name);
-      setEmail(data.user.email);
-      setAddress(data.user.address);
-      setCity(data.user.city);
-      setCountry(data.user.country);
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      toast.error("Error fetching user details");
-    }
-  };
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    address: "",
+    city: "",
+    country: "",
+    phone: "",
+    profilePicture: "",
+  });
+  const [loading, setLoading] = useState(true);
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
-    console.log("Params in UserDetails:", params); // Log params to debug
-    if (params.id && params.id !== "undefined") {
-      getSingleUser(); // Call function to fetch user data if id is valid
-    } else {
-      console.error("User ID is undefined"); // Log error if ID is undefined
-    }
-    //eslint-disable-next-line
-  }, [params.id]);
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      const userData = new FormData();
-      userData.append("name", name);
-      userData.append("email", email);
-      userData.append("address", address);
-      userData.append("city", city);
-      userData.append("country", country);
-
-      const { data } = await axios.put(
-        `${process.env.REACT_APP_API}/api/update`, // Change params._id to params.id
-        userData,
-        { withCredentials: true }
-      );
-
-      console.log("Response from update:", data);
-
-      if (data?.success) {
-        toast.success(data.message);
-        navigate("/"); // Navigate after success
-      } else {
-        toast.error("User is not updated");
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/get-single-user/${id}`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("Fetched user data:", response.data);
+        if (response.data.user) {
+          setUser(response.data.user);
+        } else {
+          toast.error("User not found");
+        }
+      } catch (error) {
+        console.error("Error fetching user data", error);
+        toast.error("Failed to fetch user data");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error updating user:", error);
-      toast.error("Something went wrong");
+    };
+
+    fetchUser();
+  }, [id]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "file") {
+      setFile(e.target.files[0]);
+    } else {
+      setUser({ ...user, [name]: value });
     }
   };
 
-  return (
-    <Layout>
-      <div className="container-fluid m-3 p-3">
-        <div className="row">
-          <div className="col-md-3">
-            <AdminMenu />
-          </div>
-          <div className="col-md-9">
-            <h1 className="text-center">Update User</h1>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-            <form onSubmit={handleUpdate}>
-              {" "}
-              {/* Use form for handling submission */}
-              <div className="mb-3">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)} // Bind input to name state
-                  className="form-control"
-                  placeholder="Enter Name"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)} // Bind input to email state
-                  className="form-control"
-                  placeholder="Enter Email"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)} // Bind input to address state
-                  className="form-control"
-                  placeholder="Enter Address"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)} // Bind input to city state
-                  className="form-control"
-                  placeholder="Enter City"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="text"
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)} // Bind input to country state
-                  className="form-control"
-                  placeholder="Enter Country"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <button type="submit" className="btn btn-primary">
-                  UPDATE USER
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+    const formData = new FormData();
+    formData.append("name", user.name);
+    formData.append("email", user.email);
+    formData.append("address", user.address);
+    formData.append("city", user.city);
+    formData.append("country", user.country);
+    formData.append("phone", user.phone);
+    if (file) {
+      formData.append("file", file);
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/update-other-user/${id}`,
+        formData,
+        { withCredentials: true }
+      );
+      toast.success(response.data.message);
+      navigate("/admin/users");
+    } catch (error) {
+      console.error("Error updating user", error);
+      toast.error("Failed to update user");
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <div className="container mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Update User</h1>
+      <div className="mb-4">
+        <img
+          src={user.profilePicture?.url || "/images/default_image.jpg"}
+          alt="Profile"
+          className="w-32 h-32 rounded-full mb-2"
+        />
       </div>
-    </Layout>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="name"
+          value={user.name}
+          onChange={handleChange}
+          placeholder="Name"
+          className="input"
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          value={user.email}
+          onChange={handleChange}
+          placeholder="Email"
+          className="input"
+          required
+        />
+        <input
+          type="text"
+          name="address"
+          value={user.address}
+          onChange={handleChange}
+          placeholder="Address"
+          className="input"
+        />
+        <input
+          type="text"
+          name="city"
+          value={user.city}
+          onChange={handleChange}
+          placeholder="City"
+          className="input"
+        />
+        <input
+          type="text"
+          name="country"
+          value={user.country}
+          onChange={handleChange}
+          placeholder="Country"
+          className="input"
+        />
+        <input
+          type="file"
+          name="file"
+          onChange={handleChange}
+          className="input"
+        />
+        <input
+          type="tel"
+          name="phone"
+          value={user.phone}
+          onChange={handleChange}
+          placeholder="Phone"
+          className="input"
+        />
+        <button type="submit" className="btn">
+          Update User
+        </button>
+      </form>
+    </div>
   );
 };
 

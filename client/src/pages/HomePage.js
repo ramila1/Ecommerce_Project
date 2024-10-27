@@ -27,6 +27,8 @@ const HomePage = () => {
     if (!auth?.user) {
       e.preventDefault();
       alert("Please Sign In first");
+    } else if (auth.user.role === "admin") {
+      navigate(`/admin/product-details/${productId}`);
     } else {
       navigate(`/user/single-product/${productId}`);
     }

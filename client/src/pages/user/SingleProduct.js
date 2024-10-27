@@ -156,14 +156,10 @@ const SingleProduct = () => {
                 <p>{product.description}</p>
                 <h4>Price: ${product.price}</h4>
                 <h5>Stock: {product.stock}</h5>
-                {!user || user.role !== "admin" ? (
-                  <button
-                    onClick={handleOrderClick}
-                    className="btn btn-primary"
-                  >
-                    Order
-                  </button>
-                ) : null}
+
+                <button onClick={handleOrderClick} className="btn btn-primary">
+                  Order
+                </button>
               </div>
             </div>
 

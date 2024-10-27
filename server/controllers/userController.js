@@ -2,6 +2,7 @@ import userModel from "../models/userModel.js";
 import cookieParser from "cookie-parser";
 import { getDataUri } from "../utils/features.js";
 import cloudinary from "cloudinary";
+
 export const userController = async (req, res) => {
   try {
     const {
@@ -16,31 +17,30 @@ export const userController = async (req, res) => {
       answer,
     } = req.body;
 
-    //validation
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !address ||
-      !city ||
-      !country ||
-      !answer
-    ) {
-      return res.status(500).send({
-        message: "Provide All Fields",
+    if (!req.file) {
+      return res.status(400).send({
+        message: "File not found",
         success: false,
       });
     }
-    //for existing user
-    const existingUser = await userModel.findOne({ email });
 
+    const file = getDataUri(req.file);
+    const cloudinary_data = await cloudinary.v2.uploader.upload(file.content);
+
+    const profilePicture = {
+      public_id: cloudinary_data.public_id,
+      url: cloudinary_data.url,
+    };
+
+    const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      res.status(500).send({
-        message: "User already exist",
+      return res.status(400).send({
+        message: "User already exists",
         success: false,
       });
     }
-    const user = await userModel.create({
+
+    const user = new userModel({
       name,
       email,
       password,
@@ -50,7 +50,10 @@ export const userController = async (req, res) => {
       phone,
       answer,
       role,
+      profilePicture,
     });
+
+    await user.save();
 
     res.status(201).send({
       message: "Registration Success",
@@ -62,14 +65,12 @@ export const userController = async (req, res) => {
     res.status(500).send({
       message: "Error in Register",
       success: false,
-      error,
+      error: error.message,
     });
   }
 };
 
 export default userController;
-
-//login
 
 export const userLoginController = async (req, res) => {
   try {
@@ -81,7 +82,7 @@ export const userLoginController = async (req, res) => {
         success: false,
       });
     }
-    //check user
+
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(404).send({
@@ -121,7 +122,6 @@ export const userLoginController = async (req, res) => {
   }
 };
 
-//profile
 export const getUserProfile = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
@@ -141,7 +141,6 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-//logout
 export const logout = async (req, res) => {
   try {
     await res
@@ -165,12 +164,11 @@ export const logout = async (req, res) => {
   }
 };
 
-//Update
-
 export const updateUser = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
-    const { name, email, password, address, city, country, phone } = req.body;
+    const { name, email, password, address, city, country, answer, phone } =
+      req.body;
     if (name) user.name = name;
     if (email) user.email = email;
     if (password) user.password = password;
@@ -178,6 +176,7 @@ export const updateUser = async (req, res) => {
     if (city) user.city = city;
     if (country) user.country = country;
     if (phone) user.phone = phone;
+    if (answer) user.answer = answer;
 
     await user.save();
 
@@ -196,7 +195,6 @@ export const updateUser = async (req, res) => {
   }
 };
 
-//update password
 export const updatePassword = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
@@ -233,17 +231,17 @@ export const updatePassword = async (req, res) => {
     });
   }
 };
-//prfile pic
+
 export const profilePic = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
-    //get file
+
     const getPic = await getDataUri(req.file);
-    // //delete existing photo
+
     const delPic = await cloudinary.v2.uploader.destroy(
       user.profilePicture.public_id
     );
-    //upload
+
     const uploadpic = await cloudinary.v2.uploader.upload(getPic.content);
     user.profilePicture = {
       public_id: uploadpic.public_id,
@@ -264,7 +262,6 @@ export const profilePic = async (req, res) => {
   }
 };
 
-//password reset
 export const passwordResetController = async (req, res) => {
   try {
     const { email, newPassword, answer } = req.body;
@@ -321,7 +318,6 @@ export const getAllUserController = async (req, res) => {
 
 export const getSingleUser = async (req, res) => {
   try {
-    // Assuming the user ID is passed as a URL parameter
     const { id } = req.params;
 
     const user = await userModel.findOne({ _id: id });
@@ -351,6 +347,56 @@ export const getSingleUser = async (req, res) => {
       message: "Error during fetching single user",
       success: false,
       error,
+    });
+  }
+};
+
+export const updateOtherUser = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+    const { name, email, address, city, country, phone } = req.body;
+
+    if (!user) {
+      return res.status(404).send({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (address) user.address = address;
+    if (city) user.city = city;
+    if (country) user.country = country;
+    if (phone) user.phone = phone;
+
+    if (req.file) {
+      const file = await getDataUri(req.file);
+
+      if (user.profilePicture && user.profilePicture.public_id) {
+        await cloudinary.v2.uploader.destroy(user.profilePicture.public_id);
+      }
+
+      const cloudinary_data = await cloudinary.v2.uploader.upload(file.content);
+
+      user.profilePicture = {
+        public_id: cloudinary_data.public_id,
+        url: cloudinary_data.url,
+      };
+    }
+
+    await user.save();
+    res.status(200).send({
+      message: "User updated successfully",
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      message: "Update error",
+      success: false,
+      error: error.message,
     });
   }
 };

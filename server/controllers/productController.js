@@ -2,7 +2,6 @@ import categoryModel from "../models/categoryModel.js";
 import productModel from "../models/productModel.js";
 import { getDataUri } from "../utils/features.js";
 import cloudinary from "cloudinary";
-import slugify from "slugify";
 
 export const getAllProductController = async (req, res) => {
   try {
@@ -23,25 +22,22 @@ export const getAllProductController = async (req, res) => {
   }
 };
 
-//fetch single product
-
 export const getSingleProduct = async (req, res) => {
   try {
-    const { slug } = req.params;
-    console.log("Requested slug:", slug); // Debugging output
+    const { id } = req.params;
 
-    const product = await productModel.findOne({ slug });
-    console.log("Product found:", product); // Debugging output
+    const product = await productModel.findOne({ _id: id });
+    console.log("Product found:", product);
 
     if (!product) {
       return res.status(404).send({
-        message: "Product not found",
+        message: "product not found",
         success: false,
       });
     }
 
     res.status(200).send({
-      message: "Product fetched successfully",
+      message: "product fetched successfully",
       success: true,
       product,
     });
@@ -49,7 +45,7 @@ export const getSingleProduct = async (req, res) => {
     console.log("Error:", error);
     if (error.name === "CastError") {
       return res.status(500).send({
-        message: "Invalid slug format",
+        message: "Invalid ID format",
         success: false,
       });
     }
@@ -60,10 +56,9 @@ export const getSingleProduct = async (req, res) => {
     });
   }
 };
-
 export const createProduct = async (req, res) => {
   try {
-    const { name, category, description, price, stock } = req.body; // category is the ObjectId passed from the client
+    const { name, category, description, price, stock } = req.body;
     if (!name || !category || !description || !price || !stock) {
       return res.status(500).send({
         message: "All fields are required",
@@ -85,7 +80,6 @@ export const createProduct = async (req, res) => {
       url: cloudinary_data.url,
     };
 
-    // Create the product
     const newProduct = new productModel({
       name,
       category,
@@ -93,11 +87,9 @@ export const createProduct = async (req, res) => {
       price,
       stock,
       images: [image],
-      slug: slugify(name),
     });
     await newProduct.save();
 
-    // Respond with product and category name
     res.status(200).send({
       message: "Product created",
       success: true,
@@ -113,11 +105,10 @@ export const createProduct = async (req, res) => {
   }
 };
 
-//update product
 export const updateProduct = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);
-    const { name, category, description, price, stock, images } = req.body;
+    const { name, category, description, price, stock } = req.body;
 
     if (!product) {
       return res.status(500).send({
@@ -131,7 +122,17 @@ export const updateProduct = async (req, res) => {
     if (description) product.description = description;
     if (price) product.price = price;
     if (stock) product.stock = stock;
-    if (images) product.images = images;
+
+    if (req.file) {
+      const file = getDataUri(req.file);
+      const cloudinary_data = await cloudinary.v2.uploader.upload(file.content);
+      const image = {
+        public_id: cloudinary_data.public_id,
+        url: cloudinary_data.url,
+      };
+
+      product.images.push(image);
+    }
 
     await product.save();
     res.status(200).send({
@@ -149,47 +150,6 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-//update product image
-export const updateProductImage = async (req, res) => {
-  try {
-    const product = await productModel.findById(req.params.id);
-    if (!product) {
-      return res.status(500).send({
-        message: "Product is not found",
-        success: false,
-      });
-    }
-    if (!req.file) {
-      return res.status(500).send({
-        message: "Product image is not fould",
-        success: false,
-      });
-    }
-    const file = getDataUri(req.file);
-    const cloudinary_data = await cloudinary.v2.uploader.upload(file.content);
-    const image = {
-      public_id: cloudinary_data.public_id,
-      url: cloudinary_data.url,
-    };
-
-    product.images.push(image);
-    await product.save();
-    res.status(200).send({
-      message: "Update product image successfully",
-      success: true,
-      product,
-    });
-  } catch (error) {
-    console.log(error),
-      res.status(500).send({
-        message: "Update product image error",
-        success: false,
-        error,
-      });
-  }
-};
-
-// delete product image
 export const deleteImage = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);
@@ -235,7 +195,6 @@ export const deleteImage = async (req, res) => {
   }
 };
 
-//delete product
 export const deleteProduct = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);

@@ -4,7 +4,6 @@ import {
   getSingleProduct,
   createProduct,
   updateProduct,
-  updateProductImage,
   deleteImage,
   deleteProduct,
 } from "../controllers/productController.js";
@@ -14,18 +13,16 @@ export const productRouter = express.Router();
 
 productRouter.get("/getall-product", getAllProductController);
 
-productRouter.get("/get-single-product/:slug", getSingleProduct);
+productRouter.get("/get-single-product/:id", isAuth, getSingleProduct);
 
 productRouter.post("/create-product", isAuth, isAdmin, upload, createProduct);
 
-productRouter.put("/update/:id", isAuth, isAdmin, updateProduct);
-
 productRouter.put(
-  "/update-image/:id",
+  "/update-product/:id",
   isAuth,
   isAdmin,
   upload,
-  updateProductImage
+  updateProduct
 );
 
 productRouter.delete("/delete-image/:id", isAuth, isAdmin, deleteImage);

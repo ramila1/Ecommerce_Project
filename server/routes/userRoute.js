@@ -10,6 +10,7 @@ import {
   passwordResetController,
   getAllUserController,
   getSingleUser,
+  updateOtherUser,
 } from "../controllers/userController.js";
 import { isAdmin, isAuth } from "../middleswares/authMiddleware.js";
 import { upload } from "../middleswares/multer.js";
@@ -17,7 +18,7 @@ import { upload } from "../middleswares/multer.js";
 const userRouter = express.Router();
 
 //register
-userRouter.post("/register", userController);
+userRouter.post("/register", upload, userController);
 
 //login
 userRouter.post("/login", userLoginController);
@@ -29,7 +30,7 @@ userRouter.get("/profile", isAuth, getUserProfile);
 userRouter.get("/logout", isAuth, logout);
 
 //update
-userRouter.put("/update", isAuth, updateUser);
+userRouter.put("/update-user", isAuth, updateUser);
 
 //update password
 userRouter.put("/update-password", isAuth, updatePassword);
@@ -43,6 +44,9 @@ userRouter.put("/reset-password", passwordResetController);
 userRouter.get("/get-all-users", isAuth, isAdmin, getAllUserController);
 
 userRouter.get("/get-single-user/:id", isAuth, getSingleUser);
+
+userRouter.put("/update-other-user/:id", isAuth, upload, updateOtherUser);
+
 //protect-route
 userRouter.get("/user-auth", isAuth, (req, res) => {
   res.status(200).send({ ok: true });
